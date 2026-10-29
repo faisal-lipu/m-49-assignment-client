@@ -1,26 +1,113 @@
 @import "tailwindcss";
+@plugin "daisyui";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ==============================================================
+   1. LIGHT PALETTE: Electric Frost & Cyan
+   Primary:      #3B6CFF (Electric Blue)
+   Accent:       #00D4FF (Neon Cyan)
+   Highlight:    #7C5CFF (Ultra Violet)
+   Soft Surface: #DCE6FF (Ice Tint)
+   Background:   #F4F8FF (Frost)
+   Text:         #0F1B3D (Ink Navy)
+   ============================================================== */
+[data-theme="light"] {
+  --color-base-100: #F4F8FF;      /* Frost Background */
+  --color-base-200: #DCE6FF;      /* Ice Tint Soft Surface */
+  --color-base-300: #C5D7FF;      /* Ice Tint Borders */
+  --color-base-content: #0F1B3D;  /* Ink Navy Text */
+
+  --color-primary: #3B6CFF;       /* Electric Blue */
+  --color-primary-content: #FFFFFF;
+
+  --color-secondary: #00D4FF;     /* Neon Cyan */
+  --color-secondary-content: #0F1B3D;
+
+  --color-accent: #7C5CFF;        /* Ultra Violet */
+  --color-accent-content: #FFFFFF;
+
+  --color-neutral: #0F1B3D;       /* Ink Navy */
+  --color-neutral-content: #F4F8FF;
+
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #3B82F6;
+
+  --card-border: #DCE6FF;
+  --text-muted: #4A5D78;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ==============================================================
+   2. DARK PALETTE: Neon Indigo (প্যালেট ৪ - সবচেয়ে বোল্ড)
+   Background:       #0B0B1E (Ink Black - No Pure #000)
+   Surface:          #15152E (Indigo Night)
+   Surface Elevated: #201F42 (Violet Dusk)
+   Primary:          #6366F1 (Neon Indigo)
+   Accent:           #06D6F0 (Electric Cyan)
+   Highlight:        #FF7A9C (Coral Pop)
+   Text:             #EEF0FF (Lavender White - Soft on Eyes)
+   Muted Text:       #8D90B8 (Haze)
+
+   Status Colors (Dark):
+   Success: #34D399 | Warning: #FBBF24 | Error: #F87171 | Info: #60A5FA
+   ============================================================== */
+[data-theme="dark"] {
+  --color-base-100: #0B0B1E;      /* Background (Ink Black) */
+  --color-base-200: #15152E;      /* Surface (Indigo Night) */
+  --color-base-300: #201F42;      /* Surface Elevated (Violet Dusk) */
+  --color-base-content: #EEF0FF;  /* Text (Lavender White) */
+
+  --color-primary: #6366F1;       /* Primary (Neon Indigo) */
+  --color-primary-content: #FFFFFF;
+
+  --color-secondary: #06D6F0;     /* Accent (Electric Cyan) */
+  --color-secondary-content: #0B0B1E; /* High Contrast Dark Text on Neon Cyan */
+
+  --color-accent: #FF7A9C;        /* Highlight (Coral Pop) */
+  --color-accent-content: #0B0B1E;
+
+  --color-neutral: #201F42;       /* Violet Dusk */
+  --color-neutral-content: #EEF0FF;
+
+  /* Specific Status Colors requested for Dark Mode */
+  --color-success: #34D399;
+  --color-warning: #FBBF24;
+  --color-error: #F87171;
+  --color-info: #60A5FA;
+
+  --card-border: rgba(255, 255, 255, 0.08);
+  --text-muted: #8D90B8;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+  background-color: var(--color-base-100);
+  color: var(--color-base-content);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Subtle Border for Dark Mode Cards */
+[data-theme="dark"] .card,
+[data-theme="dark"] .border-subtle {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Neon Glow Effect on Hover (Tips followed: box-shadow: 0 0 24px rgba(6, 214, 240, 0.35)) */
+.neon-glow-hover {
+  transition: all 0.3s ease;
+}
+.neon-glow-hover:hover {
+  box-shadow: 0 0 24px rgba(6, 214, 240, 0.35);
+  transform: translateY(-2px);
+}
+
+/* Primary Indigo Glow */
+.indigo-glow-hover:hover {
+  box-shadow: 0 0 24px rgba(99, 102, 241, 0.35);
+  transform: translateY(-2px);
+}
+
+/* Prevent giant SVGs */
+svg {
+  display: inline-block;
+  vertical-align: middle;
 }
