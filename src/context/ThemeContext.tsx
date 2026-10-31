@@ -29,6 +29,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     const savedTheme = (localStorage.getItem("maitri-theme") as Theme) || "light";
     setTheme(savedTheme);
     document.documentElement.setAttribute("data-theme", savedTheme);
+    document.documentElement.classList.toggle("dark", savedTheme === "dark");
     setMounted(true);
   }, []);
 
@@ -38,6 +39,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     setTheme(newTheme);
     localStorage.setItem("maitri-theme", newTheme);
     document.documentElement.setAttribute("data-theme", newTheme);
+    document.documentElement.classList.toggle("dark", newTheme === "dark");
   };
 
   return (

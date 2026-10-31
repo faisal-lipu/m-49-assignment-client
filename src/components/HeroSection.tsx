@@ -121,7 +121,7 @@ export default function HeroSection({
         {/* ================= LEFT ================= */}
         <div>
           <div
-            className={`mt-rise inline-flex items-center gap-2.5 rounded-full px-4 py-1.5 text-sm font-medium ${glass}`}
+            className={`mt-rise inline-flex items-center gap-2.5 rounded-full px-4 py-1.5 text-sm font-medium text-[#0B2447] dark:text-[#E8F0FF] ${glass}`}
           >
             <span className="relative flex h-2.5 w-2.5">
               <span className="mt-ping absolute inline-flex h-full w-full rounded-full bg-[#2DE2C0]" />
@@ -131,7 +131,7 @@ export default function HeroSection({
           </div>
 
           <h1
-            className="mt-rise mt-6 text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl xl:text-7xl"
+            className="mt-rise mt-6 text-5xl font-extrabold leading-[1.05] tracking-tight text-[#0B2447] dark:text-[#E8F0FF] sm:text-6xl xl:text-7xl"
             style={{ animationDelay: ".1s" }}
           >
             Bridging Compassion,
@@ -176,7 +176,7 @@ export default function HeroSection({
             </Link>
             <Link
               href="/create-event"
-              className={`inline-flex items-center gap-2 rounded-2xl px-7 py-4 font-semibold transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#00C6FF] ${glass}`}
+              className={`inline-flex items-center gap-2 rounded-2xl px-7 py-4 font-semibold text-[#0B2447] dark:text-[#E8F0FF] transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#00C6FF] ${glass}`}
             >
               <HandHeart className="h-5 w-5 text-[#00B8D9]" />
               Start an initiative
@@ -287,7 +287,7 @@ export default function HeroSection({
             </div>
             <div>
               <p className="text-xs text-[#35507A] dark:text-[#8EA0C4]">Community goal</p>
-              <p className="text-lg font-extrabold leading-tight">
+              <p className="text-lg font-extrabold leading-tight text-[#0B2447] dark:text-[#E8F0FF]">
                 {families.toLocaleString()}+ families supported
               </p>
             </div>
@@ -312,7 +312,7 @@ export default function HeroSection({
                 <Users className="h-4 w-4" />
               </span>
             </div>
-            <p className="mt-2 text-sm font-bold">
+            <p className="mt-2 text-sm font-bold text-[#0B2447] dark:text-[#E8F0FF]">
               {volunteers.toLocaleString()}+ active volunteers
             </p>
           </div>

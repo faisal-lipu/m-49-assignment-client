@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ==============================================================
    1. LIGHT PALETTE: Electric Frost & Cyan
    Primary:      #3B6CFF (Electric Blue)
@@ -11,7 +13,7 @@
    Text:         #0F1B3D (Ink Navy)
    ============================================================== */
 [data-theme="light"] {
-  --color-base-100: #F4F8FF;      /* Frost Background */
+  --color-base-100: #F8FCFF;      /* Frost Background */
   --color-base-200: #DCE6FF;      /* Ice Tint Soft Surface */
   --color-base-300: #C5D7FF;      /* Ice Tint Borders */
   --color-base-content: #0F1B3D;  /* Ink Navy Text */
@@ -83,6 +85,43 @@ html {
   transition: background-color 0.3s ease, color 0.3s ease;
   background-color: var(--color-base-100);
   color: var(--color-base-content);
+}
+
+/* ==============================================================
+   3. LIGHT MODE UNIVERSAL BACKGROUND: MINIMAL DOTTED MATRIX & RADIANT PALETTE
+   Active ONLY when Light Mode is selected.
+   Preserves 100% of animations, cards, and original design intact.
+   ============================================================== */
+html:not(.dark),
+html:not(.dark) body,
+[data-theme="light"],
+[data-theme="light"] body {
+  background-color: #F8FCFF !important;
+  color: #0B2447 !important;
+  background-image:
+    radial-gradient(circle, rgba(0, 184, 217, 0.10) 1px, transparent 1px),
+    radial-gradient(60% 50% at 8% 0%, rgba(0, 198, 255, 0.16), transparent 70%),
+    radial-gradient(50% 45% at 95% 12%, rgba(123, 97, 255, 0.12), transparent 70%),
+    radial-gradient(45% 40% at 50% 100%, rgba(45, 226, 192, 0.10), transparent 70%) !important;
+  background-size: 24px 24px, 100% 100%, 100% 100%, 100% 100% !important;
+  background-position: 0 0, 0 0, 0 0, 0 0 !important;
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat !important;
+  background-attachment: fixed !important;
+}
+
+/* Light mode high-contrast text guarantee for headings */
+html:not(.dark) h1,
+html:not(.dark) h2,
+html:not(.dark) h3,
+html:not(.dark) h4 {
+  color: #0B2447;
+}
+
+/* Let the dotted radiant light mode background show through page and section wrappers */
+html:not(.dark) section.bg-\[\#F2FBFF\],
+html:not(.dark) section.bg-\[\#EAF6FF\],
+html:not(.dark) .min-h-screen.bg-base-100 {
+  background-color: transparent !important;
 }
 
 /* Subtle Border for Dark Mode Cards */

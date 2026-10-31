@@ -8,10 +8,16 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { MongoClient } from "mongodb";
 
 // Connect to MongoDB Atlas for storing users and sessions in maitriDB
-const client = new MongoClient(process.env.BETTER_AUTH_DB_URL as string);
+const dbUrl =
+  process.env.BETTER_AUTH_DB_URL ||
+  "mongodb+srv://foisaliftekharlipu_db_user:Lipunext12345@cluster0.qji0htb.mongodb.net/maitriDB?appName=Cluster0";
+
+const client = new MongoClient(dbUrl);
 const db = client.db("maitriDB");
 
 export const auth = betterAuth({
+  secret: process.env.BETTER_AUTH_SECRET || "maitri_better_auth_secret_key_2026",
+  baseURL: process.env.BETTER_AUTH_URL || "https://m-49-assignment-client.vercel.app",
   // Use MongoDB adapter so user accounts and sessions are saved in MongoDB Atlas
   database: mongodbAdapter(db, { client }),
 

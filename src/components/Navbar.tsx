@@ -1,181 +1,393 @@
-"use client";
+'use client';
 
 // ==============================================================
 // Navbar Component
-// Includes App Logo (Maitri), Upcoming Events link, Theme Toggle,
-// and Conditional Login / Profile Avatar Dropdown with Hover Name
+// Full-width edge-to-edge navbar with solid #0a1229 background, zero side gaps,
+// reading progress indicator, smooth sliding tab pill,
+// interactive theme toggle, wiggle logo, and conditional auth avatar dropdown.
 // ==============================================================
 
-import React from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useSession, signOut } from "@/lib/auth-client";
-import ThemeToggle from "@/components/ThemeToggle";
-import { HeartHandshake, PlusCircle, CalendarCheck, CalendarDays, LogOut, LogIn, User } from "lucide-react";
-import { toast } from "sonner";
-import { clearToken, getServerUrl } from "@/lib/api";
+import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
+import {
+  HeartHandshake,
+  LogIn,
+  Menu,
+  X,
+  Sun,
+  Moon,
+  User,
+  PlusCircle,
+  CalendarDays,
+  CalendarCheck,
+  LogOut,
+} from 'lucide-react';
+import { useSession, signOut } from '@/lib/auth-client';
+import { clearToken, getServerUrl } from '@/lib/api';
+import { toast } from 'sonner';
+import { useTheme } from '@/context/ThemeContext';
+
+const LINKS = [
+  { label: 'Home', href: '/' },
+  { label: 'Upcoming Events', href: '/upcoming-events' },
+];
+
+const focus = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00C6FF]';
+
+interface ThemeToggleProps {
+  dark: boolean;
+  onToggle: () => void;
+  className?: string;
+}
+
+function ThemeToggle({ dark, onToggle, className = '' }: ThemeToggleProps) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+      className={`relative grid h-10 w-10 place-items-center overflow-hidden rounded-full border border-white/15 bg-white/5 text-[#E8F0FF] transition hover:border-[#00B8D9] hover:bg-white/10 ${focus} ${className}`}
+    >
+      <Sun className={`absolute h-[18px] w-[18px] transition-all duration-500 ${dark ? 'rotate-0 scale-100 opacity-100' : 'rotate-90 scale-0 opacity-0'}`} />
+      <Moon className={`absolute h-[18px] w-[18px] transition-all duration-500 ${dark ? '-rotate-90 scale-0 opacity-0' : 'rotate-0 scale-100 opacity-100'}`} />
+    </button>
+  );
+}
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
+  const { theme, toggleTheme } = useTheme();
+  const dark = theme === 'dark';
+
   const { data: session, isPending } = useSession();
   const user = session?.user;
+
+  const [open, setOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [hovered, setHovered] = useState<number | null>(null);
+  const [pill, setPill] = useState({ left: 0, width: 0, on: false });
+  const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
+
+  const activeIndex = LINKS.findIndex((l) =>
+    l.href === '/'
+      ? pathname === '/'
+      : pathname?.startsWith(l.href) || (l.href === '/upcoming-events' && pathname?.startsWith('/events'))
+  );
+  const target = hovered ?? (activeIndex !== -1 ? activeIndex : null);
+
+  /* sliding pill follows hover, rests on the active page */
+  useEffect(() => {
+    const place = () => {
+      if (target !== null && itemRefs.current[target]) {
+        const el = itemRefs.current[target];
+        if (el) {
+          setPill({ left: el.offsetLeft, width: el.offsetWidth, on: true });
+          return;
+        }
+      }
+      setPill((p) => ({ ...p, on: false }));
+    };
+    place();
+    window.addEventListener('resize', place);
+    return () => window.removeEventListener('resize', place);
+  }, [target]);
+
+  /* scroll state + reading progress */
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      setScrolled(y > 12);
+      setProgress(max > 0 ? Math.min(1, y / max) : 0);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  /* close mobile and profile menus on route change / Escape */
+  useEffect(() => {
+    setOpen(false);
+    setProfileOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpen(false);
+        setProfileOpen(false);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   // Handle Logout
   const handleLogout = async () => {
     try {
-      // 1. Sign out from BetterAuth client
       await signOut();
-
-      // 2. Also clear server-side JWT cookie and local token
       clearToken();
       await fetch(`${getServerUrl()}/api/auth/logout`, {
-        method: "POST",
-        credentials: "include",
+        method: 'POST',
+        credentials: 'include',
       });
-
-      toast.success("Logged out successfully. See you soon!");
-      router.push("/");
+      toast.success('Logged out successfully. See you soon!');
+      setProfileOpen(false);
+      router.push('/');
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to log out");
+    } catch {
+      toast.error('Failed to log out');
     }
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-base-100/90 backdrop-blur-md border-b border-base-200 transition-colors shadow-sm">
-      <div className="container mx-auto px-4 max-w-7xl navbar h-16 flex items-center justify-between">
-        
-        {/* Left Side: Brand Logo & Navigation */}
-        <div className="flex items-center gap-2">
-          <Link href="/" className="flex items-center gap-2.5 font-bold text-xl sm:text-2xl text-primary hover:opacity-90 transition-opacity">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm">
-              <HeartHandshake className="w-6 h-6" />
-            </div>
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-extrabold tracking-tight">
+    <header className="sticky top-0 z-50 w-full bg-[#0a1229] border-b border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
+      <style>{`
+        @keyframes mt-wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-12deg) scale(1.08)}75%{transform:rotate(10deg) scale(1.08)}}
+        .mt-logo:hover .mt-logo-icon{animation:mt-wiggle .6s ease}
+        @media (prefers-reduced-motion: reduce){.mt-logo:hover .mt-logo-icon{animation:none}}
+      `}</style>
+
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <nav
+          aria-label="Main"
+          className={`flex items-center justify-between transition-all duration-300 ${
+            scrolled ? 'py-2.5' : 'py-3.5'
+          }`}
+        >
+          {/* logo */}
+          <Link href="/" aria-label="Maitri home" className={`mt-logo flex items-center gap-2.5 rounded-full ${focus}`}>
+            <span className="mt-logo-icon grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-[#00C6FF] to-[#7B61FF] text-white shadow-[0_6px_16px_-4px_rgba(59,108,255,0.6)]">
+              <HeartHandshake className="h-5 w-5" />
+            </span>
+            <span className="bg-gradient-to-r from-[#3B6CFF] to-[#00B8D9] bg-clip-text text-2xl font-extrabold tracking-tight text-transparent">
               Maitri
             </span>
           </Link>
-        </div>
 
-        {/* Center / Navigation Links */}
-        <div className="hidden md:flex items-center gap-6">
-          <Link
-            href="/"
-            className="text-sm font-medium hover:text-primary transition-colors text-base-content/80 hover:text-base-content"
-          >
-            Home
-          </Link>
-          <Link
-            href="/upcoming-events"
-            className="text-sm font-medium hover:text-primary transition-colors text-base-content/80 hover:text-base-content"
-          >
-            Upcoming Events
-          </Link>
-        </div>
+          {/* desktop links with sliding pill */}
+          <ul className="relative hidden items-center md:flex" onMouseLeave={() => setHovered(null)}>
+            <span
+              aria-hidden
+              className="absolute inset-y-0 rounded-full bg-white/10 transition-all duration-300 ease-[cubic-bezier(.3,.8,.3,1)]"
+              style={{ left: pill.left, width: pill.width, opacity: pill.on ? 1 : 0 }}
+            />
+            {LINKS.map((l, i) => {
+              const active = i === activeIndex;
+              return (
+                <li key={l.href} ref={(el) => { itemRefs.current[i] = el; }} className="relative">
+                  <Link
+                    href={l.href}
+                    aria-current={active ? 'page' : undefined}
+                    onMouseEnter={() => setHovered(i)}
+                    onFocus={() => setHovered(i)}
+                    onBlur={() => setHovered(null)}
+                    className={`relative block rounded-full px-5 py-2 text-[15px] font-semibold transition-colors ${focus} ${
+                      active ? 'text-[#22D3EE]' : 'text-[#B8C7E8] hover:text-white'
+                    }`}
+                  >
+                    {l.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
 
-        {/* Right Side: Theme Toggle & Conditional Auth */}
-        <div className="flex items-center gap-3">
-          {/* Theme Toggle Button */}
-          <ThemeToggle />
+          {/* right actions */}
+          <div className="flex items-center gap-2.5">
+            <ThemeToggle dark={dark} onToggle={toggleTheme} />
 
-          {/* Conditional Auth Rendering */}
-          {isPending ? (
-            // Loading skeleton while checking session
-            <div className="w-9 h-9 rounded-full bg-base-300 animate-pulse" />
-          ) : user ? (
-            // Logged-in State: Profile picture with hover name and dropdown
-            <div className="dropdown dropdown-end">
-              <div
-                tabIndex={0}
-                role="button"
-                className="btn btn-ghost btn-circle avatar border-2 border-primary/40 hover:border-primary transition-all p-0.5"
-                title={user.name || "User Profile"} // Hovering shows display name
-              >
-                <div className="w-9 h-9 rounded-full overflow-hidden bg-primary/20 flex items-center justify-center">
+            {/* Auth State (Login button or Avatar Dropdown) */}
+            {isPending ? (
+              <div className="h-10 w-10 animate-pulse rounded-full bg-white/15" />
+            ) : user ? (
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setProfileOpen((p) => !p)}
+                  title={user.name || 'User Profile'}
+                  aria-label="User menu"
+                  className={`relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border-2 border-[#00C6FF]/60 p-0.5 shadow-sm transition hover:scale-105 hover:border-[#00C6FF] ${focus}`}
+                >
                   {user.image ? (
                     <Image
                       src={user.image}
-                      alt={user.name || "User Avatar"}
+                      alt={user.name || 'Avatar'}
                       width={36}
                       height={36}
-                      className="object-cover w-full h-full"
+                      className="h-full w-full rounded-full object-cover"
                     />
                   ) : (
-                    <span className="font-bold text-sm text-primary uppercase">
-                      {user.name ? user.name.charAt(0) : "U"}
+                    <span className="flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-[#00C6FF] to-[#7B61FF] text-xs font-bold text-white">
+                      {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                     </span>
                   )}
-                </div>
+                </button>
+
+                {/* Profile Dropdown */}
+                {profileOpen && (
+                  <div className="absolute right-0 top-12 z-50 w-60 overflow-hidden rounded-2xl border border-white/10 bg-[#0F1A3A]/95 p-2 shadow-2xl backdrop-blur-xl">
+                    <div className="border-b border-white/10 px-3 py-2.5">
+                      <p className="truncate text-sm font-bold text-white">{user.name}</p>
+                      <p className="truncate text-xs text-[#8EA0C4]">{user.email}</p>
+                    </div>
+                    <div className="mt-1 space-y-1">
+                      <Link
+                        href="/profile"
+                        onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-[#E8F0FF] hover:bg-[#22D3EE]/15"
+                      >
+                        <User className="h-4 w-4 text-[#00B8D9]" /> My Profile
+                      </Link>
+                      <Link
+                        href="/create-event"
+                        onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-[#E8F0FF] hover:bg-[#22D3EE]/15"
+                      >
+                        <PlusCircle className="h-4 w-4 text-[#00B8D9]" /> Create Event
+                      </Link>
+                      <Link
+                        href="/manage-events"
+                        onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-[#E8F0FF] hover:bg-[#22D3EE]/15"
+                      >
+                        <CalendarDays className="h-4 w-4 text-[#00B8D9]" /> Manage Events
+                      </Link>
+                      <Link
+                        href="/joined-events"
+                        onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-[#E8F0FF] hover:bg-[#22D3EE]/15"
+                      >
+                        <CalendarCheck className="h-4 w-4 text-[#00B8D9]" /> Joined Events
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-rose-400 hover:bg-rose-500/10"
+                      >
+                        <LogOut className="h-4 w-4" /> Logout
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
-
-              {/* Profile Dropdown Menu */}
-              <ul
-                tabIndex={0}
-                className="dropdown-content menu z-[60] mt-3 p-2 shadow-2xl bg-base-100 rounded-2xl w-60 border border-base-200"
+            ) : (
+              <Link
+                href="/login"
+                className={`group hidden items-center gap-2 rounded-full bg-gradient-to-r from-[#3B6CFF] to-[#7B61FF] px-5 py-2 text-sm font-bold text-white shadow-[0_6px_20px_-4px_rgba(59,108,255,0.7)] transition hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-4px_rgba(123,97,255,0.8)] sm:inline-flex ${focus}`}
               >
-                {/* User Info Header */}
-                <li className="menu-title px-4 py-2 border-b border-base-200 mb-1">
-                  <div className="font-semibold text-base-content text-sm truncate">
-                    {user.name}
-                  </div>
-                  <div className="text-xs text-base-content/60 truncate font-normal">
-                    {user.email}
-                  </div>
-                </li>
+                <LogIn className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                Login
+              </Link>
+            )}
 
-                {/* Dropdown Links */}
-                <li>
-                  <Link href="/profile" className="py-2.5 flex items-center gap-2.5 text-sm hover:text-primary">
-                    <User className="w-4 h-4 text-primary" />
-                    <span>My Profile</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/create-event" className="py-2.5 flex items-center gap-2.5 text-sm hover:text-primary">
-                    <PlusCircle className="w-4 h-4 text-primary" />
-                    <span>Create Event</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/manage-events" className="py-2.5 flex items-center gap-2.5 text-sm hover:text-primary">
-                    <CalendarDays className="w-4 h-4 text-primary" />
-                    <span>Manage Events</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/joined-events" className="py-2.5 flex items-center gap-2.5 text-sm hover:text-primary">
-                    <CalendarCheck className="w-4 h-4 text-primary" />
-                    <span>Joined Events</span>
-                  </Link>
-                </li>
+            <button
+              type="button"
+              onClick={() => setOpen((o) => !o)}
+              aria-expanded={open}
+              aria-controls="mobile-menu"
+              aria-label={open ? 'Close menu' : 'Open menu'}
+              className={`grid h-10 w-10 place-items-center rounded-full border border-white/15 bg-white/5 text-[#E8F0FF] transition hover:border-[#00B8D9] hover:bg-white/10 md:hidden ${focus}`}
+            >
+              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
+        </nav>
+      </div>
 
-                <div className="divider my-1"></div>
+      {/* reading progress along the bottom edge */}
+      <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] overflow-hidden">
+        <span
+          className="block h-full origin-left bg-gradient-to-r from-[#00C6FF] via-[#3B6CFF] to-[#7B61FF]"
+          style={{ transform: `scaleX(${progress})` }}
+        />
+      </span>
 
-                {/* Logout Button */}
+      {/* mobile panel */}
+      <div
+        id="mobile-menu"
+        className={`w-full overflow-hidden border-t border-white/10 bg-[#0a1229] transition-all duration-300 md:hidden ${
+          open ? 'max-h-96 opacity-100 py-3' : 'pointer-events-none max-h-0 border-transparent opacity-0 py-0'
+        }`}
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <ul className="space-y-1">
+            {LINKS.map((l, i) => {
+              const active = i === activeIndex;
+              return (
+                <li key={l.href}>
+                  <Link
+                    href={l.href}
+                    tabIndex={open ? 0 : -1}
+                    aria-current={active ? 'page' : undefined}
+                    className={`block rounded-xl px-4 py-2.5 text-base font-semibold transition-colors ${focus} ${
+                      active ? 'bg-white/10 text-[#22D3EE]' : 'text-[#B8C7E8] hover:bg-white/5 hover:text-white'
+                    }`}
+                  >
+                    {l.label}
+                  </Link>
+                </li>
+              );
+            })}
+
+            {user ? (
+              <>
+                <li className="pt-2">
+                  <Link
+                    href="/create-event"
+                    tabIndex={open ? 0 : -1}
+                    className="block rounded-xl px-4 py-2 text-sm font-semibold text-[#B8C7E8] hover:bg-white/5 hover:text-white"
+                  >
+                    Create Event
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/manage-events"
+                    tabIndex={open ? 0 : -1}
+                    className="block rounded-xl px-4 py-2 text-sm font-semibold text-[#B8C7E8] hover:bg-white/5 hover:text-white"
+                  >
+                    Manage Events
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/joined-events"
+                    tabIndex={open ? 0 : -1}
+                    className="block rounded-xl px-4 py-2 text-sm font-semibold text-[#B8C7E8] hover:bg-white/5 hover:text-white"
+                  >
+                    Joined Events
+                  </Link>
+                </li>
                 <li>
                   <button
+                    type="button"
                     onClick={handleLogout}
-                    className="py-2.5 flex items-center gap-2.5 text-sm text-error hover:bg-error/10 rounded-xl"
+                    tabIndex={open ? 0 : -1}
+                    className="block w-full text-left rounded-xl px-4 py-2 text-sm font-semibold text-rose-400 hover:bg-rose-500/10"
                   >
-                    <LogOut className="w-4 h-4" />
-                    <span>Logout</span>
+                    Logout ({user.name})
                   </button>
                 </li>
-              </ul>
-            </div>
-          ) : (
-            // Logged-out State: Show Login Button
-            <Link
-              href="/login"
-              className="btn btn-primary btn-sm rounded-xl px-4 gap-1.5 shadow-sm hover:shadow transition-all"
-            >
-              <LogIn className="w-4 h-4" />
-              <span>Login</span>
-            </Link>
-          )}
+              </>
+            ) : (
+              <li className="pt-2 sm:hidden">
+                <Link
+                  href="/login"
+                  tabIndex={open ? 0 : -1}
+                  className={`flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#3B6CFF] to-[#7B61FF] py-2.5 font-bold text-white shadow-md ${focus}`}
+                >
+                  <LogIn className="h-4 w-4" /> Login
+                </Link>
+              </li>
+            )}
+          </ul>
         </div>
-
       </div>
     </header>
   );
