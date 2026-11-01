@@ -416,7 +416,7 @@ function RegisterForm() {
             href={`/login${callbackUrl !== '/' ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ''}`}
             className="font-bold text-sky-600 dark:text-sky-400 hover:underline inline-flex items-center gap-0.5"
           >
-            <span>Sign in</span>
+            <span>Log in Now</span>
             <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
