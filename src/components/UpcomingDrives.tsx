@@ -297,7 +297,7 @@ interface UpcomingDrivesProps {
 
 /* ---------- section ---------- */
 export default function UpcomingDrives({ events = [] }: UpcomingDrivesProps) {
-  const shown = events.slice(0, 3);
+  const shown = events.slice(0, 6);
   const has = shown.length > 0;
 
   return (
