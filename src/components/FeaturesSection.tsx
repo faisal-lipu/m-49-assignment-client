@@ -195,20 +195,20 @@ function Timeline() {
     return () => io.disconnect();
   }, []);
   return (
-    <ol ref={ref} className="relative space-y-6 pl-1">
+    <ol ref={ref} className="relative space-y-6">
       <span
         aria-hidden
-        className="absolute left-[1.15rem] top-3 h-[calc(100%-1.5rem)] w-0.5 bg-[#D6F3FA] dark:bg-white/10"
+        className="absolute left-[18px] -translate-x-1/2 top-[18px] h-[calc(100%-36px)] w-0.5 bg-[#D6F3FA] dark:bg-white/10"
       />
       <span
         aria-hidden
-        className="absolute left-[1.15rem] top-3 w-0.5 bg-gradient-to-b from-[#2DE2C0] to-[#00B8D9] transition-[height] duration-[1600ms] ease-out"
-        style={{ height: seen ? 'calc(100% - 1.5rem)' : '0%' }}
+        className="absolute left-[18px] -translate-x-1/2 top-[18px] w-0.5 bg-gradient-to-b from-[#2DE2C0] to-[#00B8D9] transition-[height] duration-[1600ms] ease-out"
+        style={{ height: seen ? 'calc(100% - 36px)' : '0%' }}
       />
       {STEPS.map(({ Icon, t, d }, i) => (
         <li key={t} className="relative flex items-center gap-4">
           <span
-            className="relative z-10 grid h-9 w-9 place-items-center rounded-full bg-[#2DE2C0] text-[#06161C] transition-transform duration-500"
+            className="relative z-10 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#2DE2C0] text-[#06161C] transition-transform duration-500 shadow-sm"
             style={{
               transform: seen ? 'scale(1)' : 'scale(0.6)',
               transitionDelay: `${i * 450}ms`,

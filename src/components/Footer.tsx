@@ -8,7 +8,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { HeartHandshake, MapPin, Mail, Copy, Check, ArrowUp } from 'lucide-react';
+import Image from 'next/image';
+import { MapPin, Mail, Copy, Check, ArrowUp } from 'lucide-react';
 
 const EMAIL = 'support@maitri-events.org';
 
@@ -96,10 +97,27 @@ export default function Footer() {
           {/* brand */}
           <div>
             <Link href="/" className={`inline-flex items-center gap-3 ${focus}`} aria-label="Maitri home">
-              <span className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-[#00C6FF] to-[#7B61FF] text-white shadow-[0_0_24px_-4px_rgba(34,211,238,0.6)]">
-                <HeartHandshake className="h-6 w-6" />
+              <div className="relative h-11 w-11 shrink-0 flex items-center justify-center rounded-xl bg-gradient-to-br from-sky-500/10 to-blue-500/10 dark:from-sky-400/20 dark:to-blue-600/20 p-1 border border-sky-500/20 dark:border-sky-400/30 shadow-sm dark:shadow-[0_0_16px_rgba(56,189,248,0.35)] transition-all duration-300">
+                {/* Light Mode Logo */}
+                <Image
+                  src="/compassion.png"
+                  alt="Maitri Compassion Logo"
+                  width={40}
+                  height={40}
+                  className="h-full w-full object-contain block dark:hidden drop-shadow-sm transition-transform duration-300"
+                />
+                {/* Dark Mode Logo */}
+                <Image
+                  src="/light-compassion-v2.png"
+                  alt="Maitri Compassion Logo (Dark)"
+                  width={40}
+                  height={40}
+                  className="h-full w-full object-contain hidden dark:block scale-[1.08] drop-shadow-[0_0_8px_rgba(56,189,248,0.6)] transition-transform duration-300"
+                />
+              </div>
+              <span className="bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 dark:from-[#38BDF8] dark:via-[#818CF8] dark:to-[#34D399] bg-clip-text text-2xl font-extrabold tracking-tight text-transparent drop-shadow-sm">
+                Maitri
               </span>
-              <span className="text-2xl font-extrabold tracking-tight">Maitri</span>
             </Link>
             <p className="mt-5 max-w-xs leading-relaxed text-[#B8C7E8]">
               A community-driven event platform that helps people organise, join and support local social service events.
