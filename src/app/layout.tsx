@@ -17,6 +17,11 @@ export const metadata: Metadata = {
   title: "Maitri - Social Development Events Platform",
   description:
     "A community-driven event management platform to create, join, and track local social service events.",
+  icons: {
+    icon: "/light-compassion-v2.png",
+    shortcut: "/light-compassion-v2.png",
+    apple: "/light-compassion-v2.png",
+  },
 };
 
 export default function RootLayout({

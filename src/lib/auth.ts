@@ -15,9 +15,30 @@ const dbUrl =
 const client = new MongoClient(dbUrl);
 const db = client.db("maitriDB");
 
+// Determine the canonical base URL (ensures production live domain is used on Vercel)
+const getBaseUrl = () => {
+  if (process.env.BETTER_AUTH_URL && !process.env.BETTER_AUTH_URL.includes("localhost")) {
+    return process.env.BETTER_AUTH_URL;
+  }
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  if (process.env.NODE_ENV === "production") {
+    return "https://m-49-assignment-client.vercel.app";
+  }
+  return process.env.BETTER_AUTH_URL || "http://localhost:3000";
+};
+
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET || "maitri_better_auth_secret_key_2026",
-  baseURL: process.env.BETTER_AUTH_URL || "https://m-49-assignment-client.vercel.app",
+  baseURL: getBaseUrl(),
+  trustedOrigins: [
+    "https://m-49-assignment-client.vercel.app",
+    "http://localhost:3000",
+  ],
   // Use MongoDB adapter so user accounts and sessions are saved in MongoDB Atlas
   database: mongodbAdapter(db, { client }),
 
@@ -26,7 +47,7 @@ export const auth = betterAuth({
     enabled: true,
   },
 
-  // 2. Enable Social Login Providers (Google)
+  // 2. Enable Social Login Providers (Google) via Environment Variables
   socialProviders: {
     google: {
       clientId: (process.env.BETTER_AUTH_GOOGLE_CLIENT_ID || "").trim(),

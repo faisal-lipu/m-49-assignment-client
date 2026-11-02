@@ -114,10 +114,18 @@ function LoginForm() {
     setErrorMsg(null);
     setGoogleLoading(true);
     try {
-      await signIn.social({
+      const res = await signIn.social({
         provider: 'google',
         callbackURL: callbackUrl,
       });
+
+      if (res?.error) {
+        console.error('Google sign in error:', res.error);
+        const msg = res.error.message || 'Google sign in failed. Please check your credentials.';
+        setErrorMsg(msg);
+        toast.error(msg);
+        setGoogleLoading(false);
+      }
     } catch (err: unknown) {
       console.error('Google sign in error:', err);
       const msg = err instanceof Error ? err.message : 'Google sign in failed.';
