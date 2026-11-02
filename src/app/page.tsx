@@ -20,6 +20,7 @@ import UpcomingDrives from "@/components/UpcomingDrives";
 import FeaturesSection from "@/components/FeaturesSection";
 import GallerySection from "@/components/GallerySection";
 import NewsletterSection from "@/components/NewsletterSection";
+import SectionNavigator from "@/components/SectionNavigator";
 
 interface EventItem {
   _id: string;
@@ -84,6 +85,9 @@ export default function HomePage() {
           5. NEWSLETTER SECTION (Weekly Digest & Topic Picker)
       ======================================================== */}
       <NewsletterSection />
+
+      {/* Floating 1-Click Section Navigator Dock */}
+      <SectionNavigator />
 
     </div>
   );

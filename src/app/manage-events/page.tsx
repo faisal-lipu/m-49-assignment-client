@@ -25,6 +25,13 @@ import {
   X,
   Save,
   FolderOpen,
+  LayoutGrid,
+  List,
+  TableProperties,
+  Clock,
+  CheckCircle2,
+  Search,
+  FilterX,
 } from 'lucide-react';
 import { useSession } from '@/lib/auth-client';
 import { fetchWithAuth, issueServerJwt, getToken } from '@/lib/api';
@@ -55,11 +62,36 @@ const CATEGORY_OPTIONS = [
   'Community',
 ];
 
+const getCategoryBadgeClass = (category: string) => {
+  switch (category) {
+    case 'Cleanup':
+      return 'bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border-cyan-500/30';
+    case 'Plantation':
+      return 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30';
+    case 'Donation':
+      return 'bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-500/30';
+    case 'Food Relief':
+      return 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30';
+    case 'Healthcare':
+      return 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30';
+    case 'Education':
+      return 'bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-500/30';
+    case 'Animal Welfare':
+      return 'bg-orange-500/15 text-orange-700 dark:text-orange-300 border-orange-500/30';
+    default:
+      return 'bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-500/30';
+  }
+};
+
 export default function ManageEventsPage() {
   const { data: session, isPending: isSessionLoading } = useSession();
 
   const [events, setEvents] = useState<ManagedEvent[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // View Mode: 'grid' (Cards Grid), 'list' (Horizontal Cards), 'table' (Table)
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'table'>('grid');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Edit Modal State
   const [editingEvent, setEditingEvent] = useState<ManagedEvent | null>(null);
@@ -237,6 +269,18 @@ export default function ManageEventsPage() {
     }
   };
 
+  // Filtered events based on search query
+  const filteredEvents = events.filter((ev) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase().trim();
+    return (
+      ev.title.toLowerCase().includes(q) ||
+      ev.location.toLowerCase().includes(q) ||
+      (ev.eventType && ev.eventType.toLowerCase().includes(q)) ||
+      (ev.description && ev.description.toLowerCase().includes(q))
+    );
+  });
+
   // -------------------------------------------------------------
   // Protected Route Guard
   // -------------------------------------------------------------
@@ -286,7 +330,7 @@ export default function ManageEventsPage() {
   }
 
   return (
-    <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div className="min-h-screen py-12 sm:py-16 lg:py-20 pro-container mx-auto">
       {/* ----------------------------------------------------------- */}
       {/* 1. Header & Actions */}
       {/* ----------------------------------------------------------- */}
@@ -375,181 +419,459 @@ export default function ManageEventsPage() {
           </Link>
         </div>
       ) : (
-        /* Events Table (Desktop) & Cards (Mobile) */
-        <div className="bg-white/90 dark:bg-[#0c1630]/90 backdrop-blur-xl rounded-3xl border border-slate-200/80 dark:border-white/10 overflow-hidden shadow-xl">
-          {/* Desktop Table View */}
-          <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-left text-xs sm:text-sm">
-              <thead className="bg-slate-50/90 dark:bg-white/5 border-b border-slate-200/80 dark:border-white/10 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                <tr>
-                  <th scope="col" className="py-4 px-6">Event Details</th>
-                  <th scope="col" className="py-4 px-4">Category</th>
-                  <th scope="col" className="py-4 px-4">Date</th>
-                  <th scope="col" className="py-4 px-4">Location</th>
-                  <th scope="col" className="py-4 px-6 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-white/5">
-                {events.map((ev) => (
-                  <tr
+        /* Events Cards & Table View with View Switcher */
+        <div className="space-y-5">
+          {/* Controls Bar: Search & View Mode Switcher */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 rounded-2xl bg-white/80 dark:bg-[#0c1630]/90 border border-slate-200/80 dark:border-white/10 shadow-sm backdrop-blur-xl">
+            {/* Search Input */}
+            <div className="relative w-full sm:w-72">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by title, category, or venue..."
+                className="w-full pl-9 pr-8 py-2 rounded-xl text-xs sm:text-sm border border-slate-200 dark:border-slate-700/80 bg-slate-50/70 dark:bg-[#081024] text-[#0B2447] dark:text-[#E8F0FF] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/40 transition-all"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                  title="Clear search"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* Results Counter & View Mode Switcher */}
+            <div className="flex items-center justify-between sm:justify-end gap-3">
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                Showing{' '}
+                <strong className="text-[#0B2447] dark:text-[#E8F0FF]">{filteredEvents.length}</strong>{' '}
+                of {events.length} {events.length === 1 ? 'drive' : 'drives'}
+              </span>
+
+              {/* View Toggle */}
+              <div className="inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200/80 dark:border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setViewMode('grid')}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    viewMode === 'grid'
+                      ? 'bg-white dark:bg-[#00a6f4] text-[#0077b6] dark:text-white shadow-sm scale-[1.02]'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                  title="Grid Cards View"
+                >
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline">Grid Cards</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setViewMode('list')}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    viewMode === 'list'
+                      ? 'bg-white dark:bg-[#00a6f4] text-[#0077b6] dark:text-white shadow-sm scale-[1.02]'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                  title="Horizontal Cards View"
+                >
+                  <List className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline">List Cards</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setViewMode('table')}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    viewMode === 'table'
+                      ? 'bg-white dark:bg-[#00a6f4] text-[#0077b6] dark:text-white shadow-sm scale-[1.02]'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                  title="Compact Table View"
+                >
+                  <TableProperties className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline">Table</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* If Search yielded 0 results */}
+          {filteredEvents.length === 0 ? (
+            <div className="p-10 text-center bg-white/80 dark:bg-[#0c1630]/90 rounded-3xl border border-dashed border-slate-300 dark:border-white/10">
+              <FilterX className="w-10 h-10 text-slate-400 mx-auto mb-3" />
+              <h3 className="text-base font-bold text-[#0B2447] dark:text-[#E8F0FF] mb-1">
+                No drives match &ldquo;{searchQuery}&rdquo;
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
+                Try searching for another keyword, location, or reset the search query.
+              </p>
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold shadow-sm transition-all cursor-pointer"
+              >
+                Clear Search Filter
+              </button>
+            </div>
+          ) : viewMode === 'grid' ? (
+            /* ------------------------------------------------------- */
+            /* 1. Grid Cards View (Default)                            */
+            /* ------------------------------------------------------- */
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredEvents.map((ev) => {
+                const isUpcoming = ev.eventDate >= todayString;
+                return (
+                  <div
                     key={ev._id}
-                    className="hover:bg-slate-50/70 dark:hover:bg-white/5 transition-colors"
+                    className="group relative flex flex-col rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white/90 dark:bg-[#0c1630]/90 backdrop-blur-xl overflow-hidden shadow-md hover:shadow-2xl hover:border-sky-500/40 dark:hover:border-[#00a6f4]/50 transition-all duration-300 hover:-translate-y-1"
                   >
-                    {/* Event Details */}
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-3.5">
-                        <div className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-800">
-                          <Image
-                            src={ev.thumbnail || 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&q=80&w=300'}
-                            alt={ev.title}
-                            fill
-                            sizes="56px"
-                            className="object-cover"
-                            unoptimized
-                          />
-                        </div>
-                        <div className="min-w-0 max-w-xs">
-                          <Link
-                            href={`/events/${ev._id}`}
-                            className="font-bold text-[#0B2447] dark:text-[#E8F0FF] hover:text-sky-600 dark:hover:text-sky-400 transition-colors line-clamp-1 block text-sm"
-                          >
-                            {ev.title}
-                          </Link>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">
-                            {ev.description}
-                          </p>
-                        </div>
+                    {/* Card Image Banner */}
+                    <div className="relative w-full h-48 overflow-hidden bg-slate-100 dark:bg-slate-800">
+                      <Image
+                        src={
+                          ev.thumbnail ||
+                          'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&q=80&w=600'
+                        }
+                        alt={ev.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        unoptimized
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent pointer-events-none" />
+
+                      {/* Category Pill Floating Over Image */}
+                      <div className="absolute top-3 left-3">
+                        <span
+                          className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold border backdrop-blur-md shadow-sm ${getCategoryBadgeClass(
+                            ev.eventType
+                          )}`}
+                        >
+                          {ev.eventType}
+                        </span>
                       </div>
-                    </td>
 
-                    {/* Category */}
-                    <td className="py-4 px-4">
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
-                        {ev.eventType}
-                      </span>
-                    </td>
+                      {/* Status Pill Floating Over Image */}
+                      <div className="absolute top-3 right-3">
+                        {isUpcoming ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500/90 text-white backdrop-blur-md border border-emerald-400/40 shadow-sm">
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            Upcoming
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800/90 text-slate-300 backdrop-blur-md border border-white/10 shadow-sm">
+                            <Clock className="w-3.5 h-3.5" />
+                            Past Drive
+                          </span>
+                        )}
+                      </div>
 
-                    {/* Date */}
-                    <td className="py-4 px-4 whitespace-nowrap">
-                      <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300 font-medium">
-                        <Calendar className="w-3.5 h-3.5 text-sky-500 shrink-0" />
+                      {/* Event Scheduled Date */}
+                      <div className="absolute bottom-3 left-3 flex items-center gap-1.5 text-xs font-semibold text-white/95 drop-shadow">
+                        <Calendar className="w-3.5 h-3.5 text-sky-400 shrink-0" />
                         <span>{formatDate(ev.eventDate)}</span>
                       </div>
-                    </td>
-
-                    {/* Location */}
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 max-w-[180px]">
-                        <MapPin className="w-3.5 h-3.5 text-rose-500 shrink-0" />
-                        <span className="truncate">{ev.location}</span>
-                      </div>
-                    </td>
-
-                    {/* Action Buttons */}
-                    <td className="py-4 px-6 text-right whitespace-nowrap">
-                      <div className="flex items-center justify-end gap-2">
-                        <Link
-                          href={`/events/${ev._id}`}
-                          className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer"
-                          title="View live event"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </Link>
-
-                        <button
-                          type="button"
-                          onClick={() => handleOpenEdit(ev)}
-                          className="p-2 rounded-xl bg-sky-500/10 hover:bg-sky-500 text-sky-600 hover:text-white dark:bg-sky-500/20 dark:hover:bg-sky-500 dark:text-sky-300 dark:hover:text-white transition-all cursor-pointer"
-                          title="Edit event"
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(ev._id, ev.title)}
-                          className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-600 hover:text-white dark:bg-rose-500/20 dark:hover:bg-rose-500 dark:text-rose-400 dark:hover:text-white transition-all cursor-pointer"
-                          title="Delete event"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Mobile Cards View */}
-          <div className="md:hidden divide-y divide-slate-100 dark:divide-white/5">
-            {events.map((ev) => (
-              <div key={ev._id} className="p-4 space-y-3">
-                <div className="flex items-start gap-3">
-                  <div className="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-800">
-                    <Image
-                      src={ev.thumbnail || 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&q=80&w=300'}
-                      alt={ev.title}
-                      fill
-                      sizes="64px"
-                      className="object-cover"
-                      unoptimized
-                    />
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
-                        {ev.eventType}
-                      </span>
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                        <Calendar className="w-3 h-3 text-sky-500" />
-                        {formatDate(ev.eventDate)}
-                      </span>
                     </div>
 
-                    <h3 className="font-bold text-sm text-[#0B2447] dark:text-[#E8F0FF] line-clamp-1">
-                      {ev.title}
-                    </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-1 truncate">
-                      <MapPin className="w-3 h-3 text-rose-500 shrink-0" />
-                      {ev.location}
-                    </p>
-                  </div>
-                </div>
+                    {/* Card Body */}
+                    <div className="p-5 flex-1 flex flex-col justify-between">
+                      <div>
+                        <Link
+                          href={`/events/${ev._id}`}
+                          className="font-bold text-base sm:text-lg text-[#0B2447] dark:text-[#E8F0FF] group-hover:text-sky-600 dark:group-hover:text-[#00a6f4] transition-colors line-clamp-1 block mb-1.5"
+                          title={ev.title}
+                        >
+                          {ev.title}
+                        </Link>
 
-                {/* Mobile Actions */}
-                <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-white/5 text-xs">
-                  <Link
-                    href={`/events/${ev._id}`}
-                    className="inline-flex items-center gap-1 text-sky-600 dark:text-sky-400 font-semibold"
+                        <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-2.5">
+                          <MapPin className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                          <span className="truncate">{ev.location}</span>
+                        </div>
+
+                        <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed mb-4 text-justify break-words [overflow-wrap:anywhere]">
+                          {ev.description}
+                        </p>
+                      </div>
+
+                      {/* Card Action Footer */}
+                      <div className="pt-3.5 border-t border-slate-100 dark:border-white/10 flex items-center justify-between gap-2">
+                        <Link
+                          href={`/events/${ev._id}`}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-700 dark:text-[#E8F0FF] text-xs font-semibold transition-colors cursor-pointer"
+                          title="View live event page"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5 text-sky-500" />
+                          <span>View</span>
+                        </Link>
+
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenEdit(ev)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-500/10 hover:bg-[#00a6f4] text-[#0077b6] hover:text-white dark:bg-[#00a6f4]/20 dark:hover:bg-[#00a6f4] dark:text-[#00a6f4] dark:hover:text-white text-xs font-semibold transition-all cursor-pointer shadow-xs"
+                            title="Edit event details"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                            <span>Edit</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(ev._id, ev.title)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-600 hover:text-white dark:bg-rose-500/20 dark:hover:bg-rose-500 dark:text-rose-400 dark:hover:text-white text-xs font-semibold transition-all cursor-pointer shadow-xs"
+                            title="Delete event"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Delete</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : viewMode === 'list' ? (
+            /* ------------------------------------------------------- */
+            /* 2. Horizontal Cards View                                */
+            /* ------------------------------------------------------- */
+            <div className="flex flex-col gap-4">
+              {filteredEvents.map((ev) => {
+                const isUpcoming = ev.eventDate >= todayString;
+                return (
+                  <div
+                    key={ev._id}
+                    className="group relative flex flex-col sm:flex-row items-stretch rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white/90 dark:bg-[#0c1630]/90 backdrop-blur-xl overflow-hidden hover:shadow-xl hover:border-sky-500/40 dark:hover:border-[#00a6f4]/50 transition-all p-4 gap-4 sm:gap-5"
                   >
-                    <span>View Page</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </Link>
+                    {/* Left Thumbnail Banner */}
+                    <div className="relative w-full sm:w-56 h-48 sm:h-36 shrink-0 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800">
+                      <Image
+                        src={
+                          ev.thumbnail ||
+                          'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&q=80&w=400'
+                        }
+                        alt={ev.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, 224px"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        unoptimized
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
 
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => handleOpenEdit(ev)}
-                      className="px-3 py-1.5 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 font-semibold flex items-center gap-1"
-                    >
-                      <Pencil className="w-3 h-3" />
-                      <span>Edit</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(ev._id, ev.title)}
-                      className="px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                      <span>Delete</span>
-                    </button>
+                      <div className="absolute top-2.5 left-2.5">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold border backdrop-blur-md ${getCategoryBadgeClass(
+                            ev.eventType
+                          )}`}
+                        >
+                          {ev.eventType}
+                        </span>
+                      </div>
+
+                      <div className="absolute top-2.5 right-2.5">
+                        {isUpcoming ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-500/90 text-white backdrop-blur-md">
+                            <CheckCircle2 className="w-2.5 h-2.5" />
+                            Upcoming
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-800/90 text-slate-300 backdrop-blur-md">
+                            <Clock className="w-2.5 h-2.5" />
+                            Past
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="absolute bottom-2 left-2 flex items-center gap-1 text-[11px] font-semibold text-white/95 drop-shadow">
+                        <Calendar className="w-3 h-3 text-sky-400" />
+                        <span>{formatDate(ev.eventDate)}</span>
+                      </div>
+                    </div>
+
+                    {/* Center Details */}
+                    <div className="flex-1 flex flex-col justify-between min-w-0">
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2 mb-1.5 text-xs text-slate-500 dark:text-slate-400">
+                          <span className="inline-flex items-center gap-1">
+                            <Calendar className="w-3.5 h-3.5 text-sky-500" />
+                            {formatDate(ev.eventDate)}
+                          </span>
+                          <span>•</span>
+                          <span className="inline-flex items-center gap-1">
+                            <MapPin className="w-3.5 h-3.5 text-rose-500" />
+                            {ev.location}
+                          </span>
+                        </div>
+
+                        <Link
+                          href={`/events/${ev._id}`}
+                          className="text-base sm:text-lg font-bold text-[#0B2447] dark:text-[#E8F0FF] group-hover:text-sky-600 dark:group-hover:text-[#00a6f4] transition-colors line-clamp-1 mb-1.5 block"
+                        >
+                          {ev.title}
+                        </Link>
+
+                        <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed mb-3 text-justify break-words [overflow-wrap:anywhere]">
+                          {ev.description}
+                        </p>
+                      </div>
+
+                      {/* Footer Actions */}
+                      <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-white/10">
+                        <Link
+                          href={`/events/${ev._id}`}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-700 dark:text-[#E8F0FF] text-xs font-semibold transition-colors"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5 text-sky-500" />
+                          <span>View Live</span>
+                        </Link>
+
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenEdit(ev)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-500/10 hover:bg-[#00a6f4] text-[#0077b6] hover:text-white dark:bg-[#00a6f4]/20 dark:hover:bg-[#00a6f4] dark:text-[#00a6f4] dark:hover:text-white text-xs font-semibold transition-all cursor-pointer shadow-xs"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                            <span>Edit</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(ev._id, ev.title)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-600 hover:text-white dark:bg-rose-500/20 dark:hover:bg-rose-500 dark:text-rose-400 dark:hover:text-white text-xs font-semibold transition-all cursor-pointer shadow-xs"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Delete</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                );
+              })}
+            </div>
+          ) : (
+            /* ------------------------------------------------------- */
+            /* 3. Table View                                           */
+            /* ------------------------------------------------------- */
+            <div className="bg-white/90 dark:bg-[#0c1630]/90 backdrop-blur-xl rounded-3xl border border-slate-200/80 dark:border-white/10 overflow-hidden shadow-xl">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs sm:text-sm">
+                  <thead className="bg-slate-50/90 dark:bg-white/5 border-b border-slate-200/80 dark:border-white/10 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    <tr>
+                      <th scope="col" className="py-4 px-6">Event Details</th>
+                      <th scope="col" className="py-4 px-4">Category</th>
+                      <th scope="col" className="py-4 px-4">Date</th>
+                      <th scope="col" className="py-4 px-4">Location</th>
+                      <th scope="col" className="py-4 px-6 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-white/5">
+                    {filteredEvents.map((ev) => (
+                      <tr
+                        key={ev._id}
+                        className="hover:bg-slate-50/70 dark:hover:bg-white/5 transition-colors"
+                      >
+                        {/* Event Details */}
+                        <td className="py-4 px-6">
+                          <div className="flex items-center gap-3.5">
+                            <div className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-800">
+                              <Image
+                                src={
+                                  ev.thumbnail ||
+                                  'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&q=80&w=300'
+                                }
+                                alt={ev.title}
+                                fill
+                                sizes="56px"
+                                className="object-cover"
+                                unoptimized
+                              />
+                            </div>
+                            <div className="min-w-0 max-w-xs">
+                              <Link
+                                href={`/events/${ev._id}`}
+                                className="font-bold text-[#0B2447] dark:text-[#E8F0FF] hover:text-sky-600 dark:hover:text-[#00a6f4] transition-colors line-clamp-1 block text-sm"
+                              >
+                                {ev.title}
+                              </Link>
+                              <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5 text-justify break-words [overflow-wrap:anywhere]">
+                                {ev.description}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Category */}
+                        <td className="py-4 px-4">
+                          <span
+                            className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold border ${getCategoryBadgeClass(
+                              ev.eventType
+                            )}`}
+                          >
+                            {ev.eventType}
+                          </span>
+                        </td>
+
+                        {/* Date */}
+                        <td className="py-4 px-4 whitespace-nowrap">
+                          <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300 font-medium">
+                            <Calendar className="w-3.5 h-3.5 text-sky-500 shrink-0" />
+                            <span>{formatDate(ev.eventDate)}</span>
+                          </div>
+                        </td>
+
+                        {/* Location */}
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 max-w-[180px]">
+                            <MapPin className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                            <span className="truncate">{ev.location}</span>
+                          </div>
+                        </td>
+
+                        {/* Action Buttons */}
+                        <td className="py-4 px-6 text-right whitespace-nowrap">
+                          <div className="flex items-center justify-end gap-2">
+                            <Link
+                              href={`/events/${ev._id}`}
+                              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer"
+                              title="View live event"
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                            </Link>
+
+                            <button
+                              type="button"
+                              onClick={() => handleOpenEdit(ev)}
+                              className="p-2 rounded-xl bg-sky-500/10 hover:bg-[#00a6f4] text-sky-600 hover:text-white dark:bg-[#00a6f4]/20 dark:hover:bg-[#00a6f4] dark:text-[#00a6f4] dark:hover:text-white transition-all cursor-pointer"
+                              title="Edit event"
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(ev._id, ev.title)}
+                              className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-600 hover:text-white dark:bg-rose-500/20 dark:hover:bg-rose-500 dark:text-rose-400 dark:hover:text-white transition-all cursor-pointer"
+                              title="Delete event"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            ))}
-          </div>
+            </div>
+          )}
         </div>
       )}
 

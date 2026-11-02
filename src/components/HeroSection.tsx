@@ -14,9 +14,6 @@ import {
   ShieldCheck,
   BadgeCheck,
   MapPin,
-  GraduationCap,
-  Stethoscope,
-  Leaf,
   Users,
   Sparkles,
 } from "lucide-react";
@@ -59,20 +56,20 @@ const glass =
   "backdrop-blur-xl border bg-white/70 border-white/70 shadow-[0_10px_40px_-10px_rgba(0,120,200,0.35)] " +
   "dark:bg-[#131C3A]/70 dark:border-white/10 dark:shadow-[0_0_40px_-8px_rgba(34,211,238,0.35)]";
 
-const AVATARS = ["#00B8D9", "#7B61FF", "#2DE2C0", "#FF6B9A"];
-
 interface HeroSectionProps {
   image?: string;
 }
 
 export default function HeroSection({
-  image = "https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&q=80&w=1200",
+  image = "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=1200",
 }: HeroSectionProps) {
   const [families, familiesRef] = useCountUp(1250);
   const [volunteers, volunteersRef] = useCountUp(2400);
+  const [transparency, transparencyRef] = useCountUp(100);
+  const [drives, drivesRef] = useCountUp(98);
 
   return (
-    <section className="relative overflow-hidden bg-[#F2FBFF] text-[#0B2447] dark:bg-[#0A1128] dark:text-[#E8F0FF] transition-colors">
+    <section id="hero" className="relative min-h-[calc(100vh-4.5rem)] flex items-center overflow-hidden bg-[#F2FBFF] text-[#0B2447] dark:bg-[#0A1128] dark:text-[#E8F0FF] transition-colors scroll-mt-20">
       <style>{`
         @keyframes mt-float   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
         @keyframes mt-float2  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(12px)} }
@@ -117,11 +114,11 @@ export default function HeroSection({
         />
       </div>
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-5 py-16 sm:px-8 lg:grid-cols-[1.05fr_1fr] lg:py-24">
+      <div className="relative mx-auto grid pro-container items-center gap-8 lg:gap-12 py-8 lg:py-10 w-full lg:grid-cols-[1.05fr_1fr]">
         {/* ================= LEFT ================= */}
         <div>
           <div
-            className={`mt-rise inline-flex items-center gap-2.5 rounded-full px-4 py-1.5 text-sm font-medium text-[#0B2447] dark:text-[#E8F0FF] ${glass}`}
+            className={`mt-rise inline-flex items-center gap-2.5 rounded-full px-3.5 py-1 text-xs sm:text-sm font-medium text-[#0B2447] dark:text-[#E8F0FF] ${glass}`}
           >
             <span className="relative flex h-2.5 w-2.5">
               <span className="mt-ping absolute inline-flex h-full w-full rounded-full bg-[#2DE2C0]" />
@@ -131,10 +128,10 @@ export default function HeroSection({
           </div>
 
           <h1
-            className="mt-rise mt-6 text-5xl font-extrabold leading-[1.05] tracking-tight text-[#0B2447] dark:text-[#E8F0FF] sm:text-6xl xl:text-7xl"
+            className="mt-rise mt-4 text-[26px] min-[380px]:text-3xl font-extrabold leading-[1.12] tracking-tight text-[#0B2447] dark:text-[#E8F0FF] sm:text-4xl md:text-5xl lg:text-[42px] xl:text-5xl"
             style={{ animationDelay: ".1s" }}
           >
-            Bridging Compassion,
+            <span className="block whitespace-nowrap">Bridging Compassion,</span>
             <span className="relative block">
               <span className="mt-grad bg-gradient-to-r from-[#3B6CFF] via-[#00C6FF] to-[#7B61FF] bg-clip-text text-transparent">
                 Inspiring Change.
@@ -156,7 +153,7 @@ export default function HeroSection({
           </h1>
 
           <p
-            className="mt-rise mt-8 max-w-xl text-lg leading-relaxed text-[#35507A] dark:text-[#8EA0C4]"
+            className="mt-rise mt-4 max-w-lg text-xs sm:text-sm leading-relaxed text-[#35507A] dark:text-[#8EA0C4]"
             style={{ animationDelay: ".2s" }}
           >
             Maitri is a citizen-first social service hub. Find donation drives near you, join a
@@ -164,28 +161,28 @@ export default function HeroSection({
           </p>
 
           <div
-            className="mt-rise mt-9 flex flex-wrap items-center gap-4"
+            className="mt-rise mt-6 flex flex-wrap items-center gap-3.5"
             style={{ animationDelay: ".3s" }}
           >
             <Link
               href="/upcoming-events"
-              className="group relative inline-flex items-center gap-2 overflow-hidden rounded-2xl bg-gradient-to-r from-[#3B6CFF] to-[#7B61FF] px-7 py-4 font-semibold text-white shadow-[0_12px_30px_-8px_rgba(59,108,255,0.7)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_40px_-6px_rgba(123,97,255,0.8)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#00C6FF]"
+              className="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-[#3B6CFF] to-[#7B61FF] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_12px_30px_-8px_rgba(59,108,255,0.7)] transition hover:-translate-y-0.5 hover:shadow-[0_16px_40px_-6px_rgba(123,97,255,0.8)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#00C6FF]"
             >
               Explore drives
-              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
               href="/create-event"
-              className={`inline-flex items-center gap-2 rounded-2xl px-7 py-4 font-semibold text-[#0B2447] dark:text-[#E8F0FF] transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#00C6FF] ${glass}`}
+              className={`inline-flex items-center gap-2 rounded-xl px-6 py-3.5 text-sm font-semibold text-[#0B2447] dark:text-[#E8F0FF] transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#00C6FF] ${glass}`}
             >
-              <HandHeart className="h-5 w-5 text-[#00B8D9]" />
+              <HandHeart className="h-4 w-4 text-[#00B8D9]" />
               Start an initiative
             </Link>
           </div>
 
           {/* trust row */}
           <ul
-            className="mt-rise mt-10 flex flex-wrap gap-x-7 gap-y-3 text-sm text-[#35507A] dark:text-[#8EA0C4]"
+            className="mt-rise mt-6 flex flex-wrap gap-x-6 gap-y-2 text-xs sm:text-sm text-[#35507A] dark:text-[#8EA0C4]"
             style={{ animationDelay: ".4s" }}
           >
             {[
@@ -195,8 +192,8 @@ export default function HeroSection({
             ].map(([Icon, label]) => {
               const IconComp = Icon as any;
               return (
-                <li key={label as string} className="flex items-center gap-2">
-                  <IconComp className="h-4 w-4 text-[#00B8D9]" />
+                <li key={label as string} className="flex items-center gap-1.5">
+                  <IconComp className="h-3.5 w-3.5 text-[#00B8D9]" />
                   {label as string}
                 </li>
               );
@@ -205,7 +202,7 @@ export default function HeroSection({
         </div>
 
         {/* ================= RIGHT: layered composition ================= */}
-        <div className="relative mx-auto h-[520px] w-full max-w-[540px] sm:h-[580px]">
+        <div className="relative mx-auto h-[480px] w-full max-w-[480px] sm:h-[510px]">
           {/* rotating dashed ring */}
           <svg
             aria-hidden
@@ -224,11 +221,11 @@ export default function HeroSection({
             />
           </svg>
 
-          {/* back card (gradient) */}
-          <div className="absolute inset-x-8 top-8 bottom-10 -rotate-6 rounded-[2.2rem] bg-gradient-to-br from-[#00C6FF] via-[#3B6CFF] to-[#7B61FF] opacity-90 shadow-2xl" />
+          {/* back card (gradient) - hidden in responsive so it stays straight and clean */}
+          <div className="hidden lg:block absolute inset-x-8 top-6 bottom-24 -rotate-6 rounded-[2.2rem] bg-gradient-to-br from-[#00C6FF] via-[#3B6CFF] to-[#7B61FF] opacity-90 shadow-2xl" />
 
-          {/* main image card */}
-          <figure className="group absolute inset-x-6 top-4 bottom-14 rotate-3 overflow-hidden rounded-[2.2rem] border-4 border-white shadow-[0_30px_60px_-20px_rgba(11,36,71,0.6)] transition-transform duration-500 hover:rotate-0 dark:border-[#1C2750]">
+          {/* main image card - straight in responsive (rotate-0) */}
+          <figure className="group absolute inset-x-3 sm:inset-x-6 top-3 bottom-24 rotate-0 lg:rotate-2 overflow-hidden rounded-[2.2rem] border-4 border-white shadow-[0_20px_50px_-15px_rgba(11,36,71,0.5)] transition-transform duration-500 hover:rotate-0 dark:border-[#1C2750]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={image}
@@ -236,108 +233,89 @@ export default function HeroSection({
               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0A1128]/90 via-[#0A1128]/10 to-transparent" />
-            <figcaption className="absolute inset-x-0 bottom-0 p-6 text-white">
+            <figcaption className="absolute inset-x-0 bottom-0 p-5 text-white">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#2DE2C0] px-3 py-1 text-xs font-bold text-[#06161C]">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#06161C]" /> Ongoing drive
               </span>
-              <p className="mt-3 text-2xl font-bold">Winter Clothes Donation Drive</p>
-              <p className="mt-1 flex items-center gap-1.5 text-sm text-white/80">
+              <p className="mt-2.5 text-xl sm:text-2xl font-bold">Winter Clothes Donation Drive</p>
+              <p className="mt-1 flex items-center gap-1.5 text-xs sm:text-sm text-white/80">
                 <MapPin className="h-4 w-4" /> Mirpur, Dhaka
               </p>
-              <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/20">
+              <div className="mt-3.5 h-2 overflow-hidden rounded-full bg-white/20">
                 <div className="mt-grad h-full w-[72%] rounded-full bg-gradient-to-r from-[#2DE2C0] via-[#00C6FF] to-[#7B61FF]" />
               </div>
               <p className="mt-1.5 text-xs text-white/70">72% of the goal reached</p>
             </figcaption>
           </figure>
 
-          {/* thread connecting the floating cards (Maitri = bond) */}
-          <svg
-            aria-hidden
-            viewBox="0 0 540 580"
-            className="pointer-events-none absolute inset-0 h-full w-full"
-          >
-            <path
-              className="mt-flow"
-              d="M70 90 C 20 230, 140 300, 100 470"
-              fill="none"
-              stroke="#00C6FF"
-              strokeWidth="2.5"
-              strokeDasharray="6 10"
-              strokeLinecap="round"
-            />
-            <path
-              className="mt-flow"
-              d="M470 130 C 560 260, 430 340, 470 440"
-              fill="none"
-              stroke="#7B61FF"
-              strokeWidth="2.5"
-              strokeDasharray="6 10"
-              strokeLinecap="round"
-            />
-          </svg>
-
-          {/* floating: community goal */}
+          {/* 4 compact badges below the picture in place of the old category pills */}
           <div
-            ref={familiesRef}
-            className={`mt-float absolute -left-2 top-2 flex items-center gap-3 rounded-2xl px-4 py-3 sm:-left-8 ${glass}`}
-          >
-            <div className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-[#00C6FF] to-[#3B6CFF] text-white">
-              <HandHeart className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-xs text-[#35507A] dark:text-[#8EA0C4]">Community goal</p>
-              <p className="text-lg font-extrabold leading-tight text-[#0B2447] dark:text-[#E8F0FF]">
-                {families.toLocaleString()}+ families supported
-              </p>
-            </div>
-          </div>
-
-          {/* floating: volunteers */}
-          <div
-            ref={volunteersRef}
-            className={`mt-float2 absolute -right-2 top-[44%] rounded-2xl px-4 py-3 sm:-right-8 ${glass}`}
-          >
-            <div className="flex -space-x-2.5">
-              {AVATARS.map((c, i) => (
-                <span
-                  key={c}
-                  className="grid h-9 w-9 place-items-center rounded-full border-2 border-white text-xs font-bold text-white dark:border-[#131C3A]"
-                  style={{ background: c }}
-                >
-                  {["R", "S", "A", "N"][i]}
-                </span>
-              ))}
-              <span className="grid h-9 w-9 place-items-center rounded-full border-2 border-white bg-[#E3E8FF] text-xs font-bold text-[#3B6CFF] dark:border-[#131C3A] dark:bg-[#1C2750] dark:text-[#22D3EE]">
-                <Users className="h-4 w-4" />
-              </span>
-            </div>
-            <p className="mt-2 text-sm font-bold text-[#0B2447] dark:text-[#E8F0FF]">
-              {volunteers.toLocaleString()}+ active volunteers
-            </p>
-          </div>
-
-          {/* floating: category chips */}
-          <div
-            className="mt-float absolute -bottom-1 left-2 flex flex-wrap gap-2 sm:left-4"
+            className="mt-float absolute bottom-0 inset-x-2 sm:inset-x-4 grid grid-cols-2 gap-2 sm:gap-2.5 z-10"
             style={{ animationDelay: "-2s" }}
           >
-            {[
-              [GraduationCap, "Education", "#7B61FF"],
-              [Stethoscope, "Health", "#10B981"],
-              [Leaf, "Environment", "#0891B2"],
-            ].map(([Icon, label, c]) => {
-              const IconComp = Icon as any;
-              return (
-                <span
-                  key={label as string}
-                  className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-semibold ${glass}`}
-                >
-                  <IconComp className="h-3.5 w-3.5" style={{ color: c as string }} />
-                  {label as string}
-                </span>
-              );
-            })}
+            {/* badge 1: families */}
+            <div
+              ref={familiesRef}
+              className={`flex items-center gap-2 rounded-xl px-2.5 py-2 sm:px-3 sm:py-2 ${glass}`}
+            >
+              <div className="grid h-7 w-7 sm:h-8 sm:w-8 place-items-center rounded-lg bg-gradient-to-br from-[#00C6FF] to-[#3B6CFF] text-white shrink-0 shadow-sm">
+                <HandHeart className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[10px] text-[#35507A] dark:text-[#8EA0C4] truncate">Community goal</p>
+                <p className="text-xs sm:text-sm font-bold text-[#0B2447] dark:text-[#E8F0FF] truncate">
+                  {families.toLocaleString()}+ families
+                </p>
+              </div>
+            </div>
+
+            {/* badge 2: verified impact */}
+            <div
+              ref={transparencyRef}
+              className={`flex items-center gap-2 rounded-xl px-2.5 py-2 sm:px-3 sm:py-2 ${glass}`}
+            >
+              <div className="grid h-7 w-7 sm:h-8 sm:w-8 place-items-center rounded-lg bg-gradient-to-br from-[#2DE2C0] to-[#00C6FF] text-[#06161C] shrink-0 shadow-sm">
+                <ShieldCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#06161C]" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[10px] text-[#35507A] dark:text-[#8EA0C4] truncate">Verified impact</p>
+                <p className="text-xs sm:text-sm font-bold text-[#0B2447] dark:text-[#E8F0FF] truncate">
+                  {transparency}% transparent
+                </p>
+              </div>
+            </div>
+
+            {/* badge 3: completed drives */}
+            <div
+              ref={drivesRef}
+              className={`flex items-center gap-2 rounded-xl px-2.5 py-2 sm:px-3 sm:py-2 ${glass}`}
+            >
+              <div className="grid h-7 w-7 sm:h-8 sm:w-8 place-items-center rounded-lg bg-gradient-to-br from-[#7B61FF] to-[#3B6CFF] text-white shrink-0 shadow-sm">
+                <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[10px] text-[#35507A] dark:text-[#8EA0C4] truncate">Completed drives</p>
+                <p className="text-xs sm:text-sm font-bold text-[#0B2447] dark:text-[#E8F0FF] truncate">
+                  {drives}+ campaigns
+                </p>
+              </div>
+            </div>
+
+            {/* badge 4: active volunteers */}
+            <div
+              ref={volunteersRef}
+              className={`flex items-center gap-2 rounded-xl px-2.5 py-2 sm:px-3 sm:py-2 ${glass}`}
+            >
+              <div className="grid h-7 w-7 sm:h-8 sm:w-8 place-items-center rounded-lg bg-gradient-to-br from-[#FF6B9A] to-[#7B61FF] text-white shrink-0 shadow-sm">
+                <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[10px] text-[#35507A] dark:text-[#8EA0C4] truncate">Active volunteers</p>
+                <p className="text-xs sm:text-sm font-bold text-[#0B2447] dark:text-[#E8F0FF] truncate">
+                  {volunteers.toLocaleString()}+ active
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

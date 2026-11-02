@@ -411,7 +411,7 @@ export default function ConflictAwareDatePicker({
           </div>
 
           {/* Brief snippet */}
-          <p className="text-[10px] text-slate-300/90 mt-1.5 line-clamp-2 leading-relaxed bg-white/5 p-1.5 rounded-lg border border-white/5">
+          <p className="text-[10px] text-slate-300/90 mt-1.5 line-clamp-2 leading-relaxed bg-white/5 p-1.5 rounded-lg border border-white/5 text-justify break-words [overflow-wrap:anywhere]">
             {hoveredEvent.description}
           </p>
 
@@ -461,7 +461,7 @@ export default function ConflictAwareDatePicker({
                 <span className="font-semibold text-xs block text-[#0B2447] dark:text-[#E8F0FF]">
                   &ldquo;{hoveredEvent.title}&rdquo; ({hoveredEvent.eventType})
                 </span>
-                <p className="text-[11px] text-slate-600 dark:text-slate-300 line-clamp-2">
+                <p className="text-[11px] text-slate-600 dark:text-slate-300 line-clamp-2 text-justify break-words [overflow-wrap:anywhere]">
                   {hoveredEvent.description}
                 </p>
               </div>

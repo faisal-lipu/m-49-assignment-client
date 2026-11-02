@@ -120,7 +120,8 @@ function JoinDemo() {
     <div className="rounded-2xl bg-[#F3F1FF] p-5 dark:bg-[#1C2750]">
       <p className="text-sm font-semibold">Riverside Cleanup · Sat, 8:00 AM</p>
       <p className={`mt-0.5 text-sm ${muted}`}>Hatirjheel, Dhaka</p>
-      <div className="mt-4 flex items-center justify-between gap-3">
+      {/* Line 1: Avatars & Count */}
+      <div className="mt-4 flex items-center justify-center">
         <div className="flex items-center">
           <div className="flex -space-x-2">
             {['#00B8D9', '#2DE2C0', '#FF6B9A'].map((c) => (
@@ -140,27 +141,31 @@ function JoinDemo() {
             {count} going
           </span>
         </div>
-        <button
-          onClick={() => setJoined((j) => !j)}
-          aria-pressed={joined}
-          className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7B61FF] ${
-            joined
-              ? 'bg-[#2DE2C0] text-[#06161C]'
-              : 'bg-gradient-to-r from-[#3B6CFF] to-[#7B61FF] text-white hover:-translate-y-0.5'
-          }`}
-        >
-          {joined ? (
-            <>
-              <Check className="h-4 w-4" /> You’re in
-            </>
-          ) : (
-            <>
-              <MousePointerClick className="h-4 w-4" /> Join drive
-            </>
-          )}
-        </button>
       </div>
-      <p className={`mt-3 text-xs ${muted}`}>
+
+      {/* Line 2: Button */}
+      <button
+        type="button"
+        onClick={() => setJoined((j) => !j)}
+        aria-pressed={joined}
+        className={`w-full mt-3.5 inline-flex items-center justify-center gap-2 rounded-xl py-2.5 px-4 text-sm font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7B61FF] cursor-pointer ${
+          joined
+            ? 'bg-[#2DE2C0] text-[#06161C]'
+            : 'bg-gradient-to-r from-[#3B6CFF] to-[#7B61FF] text-white hover:opacity-95 active:scale-[0.99]'
+        }`}
+      >
+        {joined ? (
+          <>
+            <Check className="h-4 w-4" /> You’re in
+          </>
+        ) : (
+          <>
+            <MousePointerClick className="h-4 w-4" /> Join drive
+          </>
+        )}
+      </button>
+
+      <p className={`mt-2.5 text-xs text-center ${muted}`}>
         {joined
           ? 'Added to your volunteer portfolio. Tap again to leave.'
           : 'One tap. No forms, no sign-up steps.'}
@@ -234,20 +239,22 @@ interface CardLinkProps {
 
 function CardLink({ href, children, color }: CardLinkProps) {
   return (
-    <Link
-      href={href}
-      className="group mt-6 inline-flex items-center gap-1.5 text-sm font-bold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4"
-      style={{ color }}
-    >
-      {children}
-      <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-    </Link>
+    <div className="mt-auto pt-4 flex items-center justify-center w-full">
+      <Link
+        href={href}
+        className="group inline-flex items-center justify-center gap-1.5 text-sm font-bold transition-all hover:opacity-90 hover:underline underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 cursor-pointer"
+        style={{ color }}
+      >
+        <span>{children}</span>
+        <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+      </Link>
+    </div>
   );
 }
 
 export default function FeaturesSection() {
   return (
-    <section className="relative overflow-hidden bg-[#EAF6FF] py-20 text-[#0B2447] dark:bg-[#0A1128] dark:text-[#E8F0FF] sm:py-28">
+    <section id="features" className="relative min-h-[calc(100vh-4.5rem)] flex flex-col justify-center overflow-hidden bg-[#EAF6FF] py-10 lg:py-14 text-[#0B2447] dark:bg-[#0A1128] dark:text-[#E8F0FF] scroll-mt-20">
       <div
         aria-hidden
         className="pointer-events-none absolute -left-20 top-10 h-80 w-80 rounded-full bg-[#00C6FF]/25 blur-[100px] dark:bg-[#22D3EE]/15"
@@ -257,78 +264,78 @@ export default function FeaturesSection() {
         className="pointer-events-none absolute -right-20 bottom-0 h-96 w-96 rounded-full bg-[#7B61FF]/20 blur-[110px] dark:bg-[#8B7BFF]/15"
       />
 
-      <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
-        <div className="grid items-end gap-6 lg:grid-cols-[1.2fr_1fr]">
-          <h2 className="text-4xl font-extrabold leading-[1.08] tracking-tight text-[#0B2447] dark:text-[#E8F0FF] sm:text-5xl">
-            Built for the way
-            <br />
-            neighbours{' '}
+      <div className="relative mx-auto pro-container">
+        <div className="text-center max-w-5xl mx-auto">
+          <h2 className="text-2xl font-extrabold tracking-tight text-[#0B2447] dark:text-[#E8F0FF] sm:text-3xl lg:text-[38px] xl:text-[40px] leading-tight lg:whitespace-nowrap">
+            Built for the way neighbours{' '}
             <span className="bg-gradient-to-r from-[#3B6CFF] via-[#00B8D9] to-[#7B61FF] bg-clip-text text-transparent">
               actually help each other.
             </span>
           </h2>
-          <p className={`max-w-md text-lg leading-relaxed lg:justify-self-end ${muted}`}>
-            Find a drive on your street, join in one tap, and see exactly where every effort went. Try the demos below.
+          <p className={`mt-2.5 max-w-4xl mx-auto text-sm sm:text-base leading-relaxed ${muted}`}>
+            Find a drive on your street, join in one tap, and see exactly where every effort went. Try the live demos below.
           </p>
         </div>
 
-        {/* bento */}
-        <div className="mt-14 grid gap-6 lg:grid-cols-6">
-          {/* 1 */}
-          <article className={`${card} lg:col-span-3`}>
-            <div className="mb-5 flex items-center gap-3">
-              <span className="grid h-11 w-11 place-items-center rounded-xl bg-[#D6F3FA] text-[#0E7490] dark:bg-[#22D3EE]/15 dark:text-[#22D3EE]">
-                <Compass className="h-5 w-5" />
-              </span>
-              <h3 className="text-xl font-bold">Hyperlocal discovery</h3>
+        {/* 3-column bento: single screen view without scrolling */}
+        <div className="mt-8 grid gap-5 lg:grid-cols-3 items-stretch">
+          {/* Card 1 */}
+          <article className={`${card} flex flex-col justify-between h-full`}>
+            <div className="flex-1 flex flex-col">
+              <div className="mb-4 flex items-center gap-3">
+                <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#D6F3FA] text-[#0E7490] dark:bg-[#22D3EE]/15 dark:text-[#22D3EE]">
+                  <Compass className="h-5 w-5" />
+                </span>
+                <h3 className="text-lg font-bold">Hyperlocal discovery</h3>
+              </div>
+              <MapDemo />
+              <p className={`mt-4 text-xs sm:text-sm leading-relaxed ${muted}`}>
+                Filter drives by your exact neighbourhood and meet volunteers within walking distance of home.
+              </p>
             </div>
-            <MapDemo />
-            <p className={`mt-5 leading-relaxed ${muted}`}>
-              Filter drives by your exact neighbourhood and meet volunteers within walking distance of home.
-            </p>
             <CardLink href="/upcoming-events" color="#00B8D9">
               Browse by location
             </CardLink>
           </article>
 
-          {/* 2 */}
-          <article className={`${card} lg:col-span-3`}>
-            <div className="mb-5 flex items-center gap-3">
-              <span className="grid h-11 w-11 place-items-center rounded-xl bg-[#E3E8FF] text-[#5B45E6] dark:bg-[#8B7BFF]/20 dark:text-[#B3A8FF]">
-                <MousePointerClick className="h-5 w-5" />
-              </span>
-              <h3 className="text-xl font-bold">Zero-friction joining</h3>
+          {/* Card 2 */}
+          <article className={`${card} flex flex-col justify-between h-full`}>
+            <div className="flex-1 flex flex-col">
+              <div className="mb-4 flex items-center gap-3">
+                <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#E3E8FF] text-[#5B45E6] dark:bg-[#8B7BFF]/20 dark:text-[#B3A8FF]">
+                  <MousePointerClick className="h-5 w-5" />
+                </span>
+                <h3 className="text-lg font-bold">Zero-friction joining</h3>
+              </div>
+              <JoinDemo />
+              <p className={`mt-4 text-xs sm:text-sm leading-relaxed ${muted}`}>
+                Join any upcoming drive with a single click, keep your volunteer portfolio, and talk directly to event leaders.
+              </p>
             </div>
-            <JoinDemo />
-            <p className={`mt-5 leading-relaxed ${muted}`}>
-              Join any upcoming drive with a single click, keep your volunteer portfolio, and talk directly to event leaders.
-            </p>
             <CardLink href="/upcoming-events" color="#7B61FF">
               Join a drive now
             </CardLink>
           </article>
 
-          {/* 3 */}
-          <article className={`${card} lg:col-span-6`}>
-            <div className="grid items-center gap-10 md:grid-cols-2">
-              <div>
-                <div className="mb-5 flex items-center gap-3">
-                  <span className="grid h-11 w-11 place-items-center rounded-xl bg-[#D9F7F2] text-[#0F9D82] dark:bg-[#2DE2C0]/15 dark:text-[#2DE2C0]">
-                    <ShieldCheck className="h-5 w-5" />
-                  </span>
-                  <h3 className="text-xl font-bold">Transparent accountability</h3>
-                </div>
-                <p className={`max-w-md text-lg leading-relaxed ${muted}`}>
-                  Organisers link verified profiles with clear timelines, location tags and post-drive photo updates, so trust is something you can check.
-                </p>
-                <CardLink href="/upcoming-events" color="#0F9D82">
-                  See verified campaigns
-                </CardLink>
+          {/* Card 3 */}
+          <article className={`${card} flex flex-col justify-between h-full`}>
+            <div className="flex-1 flex flex-col">
+              <div className="mb-4 flex items-center gap-3">
+                <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#D9F7F2] text-[#0F9D82] dark:bg-[#2DE2C0]/15 dark:text-[#2DE2C0]">
+                  <ShieldCheck className="h-5 w-5" />
+                </span>
+                <h3 className="text-lg font-bold">Transparent accountability</h3>
               </div>
-              <div className="rounded-2xl bg-[#F0FBF8] p-6 dark:bg-[#0D262F]">
+              <div className="rounded-2xl bg-[#F0FBF8] p-4.5 dark:bg-[#0D262F]">
                 <Timeline />
               </div>
+              <p className={`mt-4 text-xs sm:text-sm leading-relaxed ${muted}`}>
+                Organisers link verified profiles with clear timelines, location tags and post-drive photo updates.
+              </p>
             </div>
+            <CardLink href="/upcoming-events" color="#0F9D82">
+              See verified campaigns
+            </CardLink>
           </article>
         </div>
       </div>

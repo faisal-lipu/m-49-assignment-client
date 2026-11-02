@@ -28,7 +28,7 @@ const TYPES = [
   { label: 'Food & Ration Relief', href: '/upcoming-events?type=food', c: '#7DA2FF' },
 ];
 
-/* ব্র্যান্ড আইকন inline SVG, যাতে lucide-react ভার্সনের ওপর নির্ভর না করে */
+/* Inline SVG brand icons ensure reliable rendering without external icon library version conflicts */
 const XIcon = (p: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden {...p}>
     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -92,37 +92,37 @@ export default function Footer() {
       <div aria-hidden className="pointer-events-none absolute -left-24 top-0 h-80 w-80 rounded-full bg-[#00B8D9]/20 blur-[110px]" />
       <div aria-hidden className="pointer-events-none absolute -right-24 top-24 h-96 w-96 rounded-full bg-[#7B61FF]/25 blur-[120px]" />
 
-      <div className="relative mx-auto max-w-7xl px-5 pt-16 sm:px-8 sm:pt-20">
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.3fr_0.8fr_1.1fr_1.2fr] lg:gap-10">
+      <div className="relative mx-auto pro-container pt-8 sm:pt-10 lg:pt-10 pb-2">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-[1.3fr_0.8fr_1.1fr_1.2fr] lg:gap-8 items-start">
           {/* brand */}
           <div>
-            <Link href="/" className={`inline-flex items-center gap-3 ${focus}`} aria-label="Maitri home">
-              <div className="relative h-11 w-11 shrink-0 flex items-center justify-center rounded-xl bg-gradient-to-br from-sky-500/10 to-blue-500/10 dark:from-sky-400/20 dark:to-blue-600/20 p-1 border border-sky-500/20 dark:border-sky-400/30 shadow-sm dark:shadow-[0_0_16px_rgba(56,189,248,0.35)] transition-all duration-300">
+            <Link href="/" className={`inline-flex items-center gap-2.5 ${focus}`} aria-label="Maitri home">
+              <div className="relative h-9 w-9 shrink-0 flex items-center justify-center rounded-xl bg-gradient-to-br from-sky-500/10 to-blue-500/10 dark:from-sky-400/20 dark:to-blue-600/20 p-1 border border-sky-500/20 dark:border-sky-400/30 shadow-sm dark:shadow-[0_0_16px_rgba(56,189,248,0.35)] transition-all duration-300">
                 {/* Light Mode Logo */}
                 <Image
                   src="/compassion.png"
                   alt="Maitri Compassion Logo"
-                  width={40}
-                  height={40}
+                  width={36}
+                  height={36}
                   className="h-full w-full object-contain block dark:hidden drop-shadow-sm transition-transform duration-300"
                 />
                 {/* Dark Mode Logo */}
                 <Image
                   src="/light-compassion-v2.png"
                   alt="Maitri Compassion Logo (Dark)"
-                  width={40}
-                  height={40}
+                  width={36}
+                  height={36}
                   className="h-full w-full object-contain hidden dark:block scale-[1.08] drop-shadow-[0_0_8px_rgba(56,189,248,0.6)] transition-transform duration-300"
                 />
               </div>
-              <span className="bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 dark:from-[#38BDF8] dark:via-[#818CF8] dark:to-[#34D399] bg-clip-text text-2xl font-extrabold tracking-tight text-transparent drop-shadow-sm">
+              <span className="bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 dark:from-[#38BDF8] dark:via-[#818CF8] dark:to-[#34D399] bg-clip-text text-xl font-extrabold tracking-tight text-transparent drop-shadow-sm">
                 Maitri
               </span>
             </Link>
-            <p className="mt-5 max-w-xs leading-relaxed text-[#B8C7E8]">
+            <p className="mt-3 max-w-xs text-xs sm:text-sm leading-relaxed text-[#B8C7E8]">
               A community-driven event platform that helps people organise, join and support local social service events.
             </p>
-            <div className="mt-6 flex gap-3">
+            <div className="mt-4 flex gap-2.5">
               {SOCIAL.map(({ label, href, Icon }) => (
                 <a
                   key={label}
@@ -130,9 +130,9 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className={`grid h-11 w-11 place-items-center rounded-full border border-white/15 bg-white/5 text-[#B8C7E8] transition hover:-translate-y-1 hover:border-transparent hover:bg-gradient-to-br hover:from-[#00C6FF] hover:to-[#7B61FF] hover:text-white hover:shadow-[0_0_24px_-2px_rgba(34,211,238,0.6)] ${focus}`}
+                  className={`grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-white/5 text-[#B8C7E8] transition hover:-translate-y-0.5 hover:border-transparent hover:bg-gradient-to-br hover:from-[#00C6FF] hover:to-[#7B61FF] hover:text-white hover:shadow-[0_0_20px_-2px_rgba(34,211,238,0.6)] ${focus}`}
                 >
-                  <Icon className="h-[18px] w-[18px]" />
+                  <Icon className="h-4 w-4" />
                 </a>
               ))}
             </div>
@@ -140,45 +140,45 @@ export default function Footer() {
 
           {/* quick links */}
           <nav aria-label="Quick links">
-            <h3 className="text-lg font-bold">Quick links</h3>
-            <ul className="mt-5 space-y-3.5">
+            <h3 className="text-sm sm:text-base font-bold text-white">Quick links</h3>
+            <ul className="mt-3 space-y-2 text-xs sm:text-sm">
               {QUICK.map((l) => (<li key={l.href}><FooterLink href={l.href}>{l.label}</FooterLink></li>))}
             </ul>
           </nav>
 
           {/* event types */}
           <nav aria-label="Event types">
-            <h3 className="text-lg font-bold">Event types</h3>
-            <ul className="mt-5 space-y-3.5">
+            <h3 className="text-sm sm:text-base font-bold text-white">Event types</h3>
+            <ul className="mt-3 space-y-2 text-xs sm:text-sm">
               {TYPES.map((l) => (<li key={l.href}><FooterLink href={l.href} dot={l.c}>{l.label}</FooterLink></li>))}
             </ul>
           </nav>
 
           {/* contact card */}
           <div>
-            <h3 className="text-lg font-bold">Get in touch</h3>
-            <div className="mt-5 space-y-4 rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
+            <h3 className="text-sm sm:text-base font-bold text-white">Get in touch</h3>
+            <div className="mt-3 space-y-3 rounded-2xl border border-white/10 bg-white/5 p-3.5 backdrop-blur-xl text-xs sm:text-sm">
               <a
                 href="https://www.google.com/maps/search/?api=1&query=Mirpur+Mohammadpur+Dhaka"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`flex gap-3 text-[#B8C7E8] transition-colors hover:text-white ${focus}`}
+                className={`flex gap-2.5 text-[#B8C7E8] transition-colors hover:text-white ${focus}`}
               >
-                <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-[#22D3EE]" />
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#22D3EE]" />
                 <span>Mirpur &amp; Mohammadpur,<br />Dhaka, Bangladesh</span>
               </a>
-              <div className="flex items-center justify-between gap-3 border-t border-white/10 pt-4">
-                <a href={`mailto:${EMAIL}`} className={`flex min-w-0 items-center gap-3 text-[#B8C7E8] transition-colors hover:text-white ${focus}`}>
-                  <Mail className="h-5 w-5 shrink-0 text-[#22D3EE]" />
+              <div className="flex items-center justify-between gap-2.5 border-t border-white/10 pt-2.5">
+                <a href={`mailto:${EMAIL}`} className={`flex min-w-0 items-center gap-2 text-[#B8C7E8] transition-colors hover:text-white ${focus}`}>
+                  <Mail className="h-4 w-4 shrink-0 text-[#22D3EE]" />
                   <span className="truncate">{EMAIL}</span>
                 </a>
                 <button
                   type="button"
                   onClick={copyEmail}
                   aria-label="Copy email address"
-                  className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-white/15 transition hover:bg-white/10 ${copied ? 'bg-[#2DE2C0] text-[#06161C] hover:bg-[#2DE2C0]' : 'text-[#B8C7E8]'} ${focus}`}
+                  className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-white/15 transition hover:bg-white/10 ${copied ? 'bg-[#2DE2C0] text-[#06161C] hover:bg-[#2DE2C0]' : 'text-[#B8C7E8]'} ${focus}`}
                 >
-                  {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
                 </button>
               </div>
               <p className="sr-only" role="status" aria-live="polite">{copied ? 'Email address copied' : ''}</p>
@@ -187,22 +187,22 @@ export default function Footer() {
         </div>
 
         {/* bottom bar */}
-        <div className="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 py-6 text-sm text-[#8EA0C4]">
+        <div className="mt-6 sm:mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-4 pb-2 text-xs sm:text-sm text-[#8EA0C4]">
           <p>© {new Date().getFullYear()} Maitri Social Platform. All rights reserved.</p>
           <p className="order-last w-full text-[#B8C7E8] sm:order-none sm:w-auto">Together for a cleaner, kinder and better tomorrow.</p>
           <button
             type="button"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className={`inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 font-semibold text-[#B8C7E8] transition hover:bg-white/10 hover:text-white ${focus}`}
+            className={`inline-flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-xs font-semibold text-[#B8C7E8] transition hover:bg-white/10 hover:text-white ${focus}`}
           >
-            Back to top <ArrowUp className="h-4 w-4" />
+            Back to top <ArrowUp className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
 
-      {/* oversized ghost wordmark, cropped at the bottom */}
-      <div aria-hidden className="pointer-events-none relative h-[clamp(4rem,13vw,11rem)] select-none overflow-hidden">
-        <p className="bg-gradient-to-b from-[#22D3EE]/35 via-[#7B61FF]/20 to-transparent bg-clip-text text-center text-[clamp(6rem,24vw,22rem)] font-extrabold leading-[0.8] tracking-tighter text-transparent">
+      {/* oversized ghost wordmark, cropped tightly at the bottom */}
+      <div aria-hidden className="pointer-events-none relative -mt-3 h-10 sm:h-12 select-none overflow-hidden">
+        <p className="bg-gradient-to-b from-[#22D3EE]/20 via-[#7B61FF]/10 to-transparent bg-clip-text text-center text-5xl sm:text-6xl font-extrabold leading-[0.8] tracking-tighter text-transparent">
           Maitri
         </p>
       </div>

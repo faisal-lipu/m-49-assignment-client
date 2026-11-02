@@ -127,6 +127,26 @@ export default function JoinedEventsPage() {
     }
   };
 
+  // Category badge helper
+  const getCategoryBadgeClass = (category?: string) => {
+    switch (category?.toLowerCase()) {
+      case 'donation':
+        return 'bg-blue-500/80 text-white border-blue-400/40';
+      case 'cleanup':
+        return 'bg-teal-500/80 text-white border-teal-400/40';
+      case 'plantation':
+        return 'bg-emerald-500/80 text-white border-emerald-400/40';
+      case 'food relief':
+        return 'bg-pink-500/80 text-white border-pink-400/40';
+      case 'healthcare':
+        return 'bg-cyan-500/80 text-white border-cyan-400/40';
+      case 'education':
+        return 'bg-indigo-500/80 text-white border-indigo-400/40';
+      default:
+        return 'bg-sky-500/80 text-white border-sky-400/40';
+    }
+  };
+
   // Format date helper
   const formatDate = (dateStr: string) => {
     try {
@@ -195,7 +215,7 @@ export default function JoinedEventsPage() {
   const estimatedHours = totalDrives * 4; // Average 4 volunteer hours per event
 
   return (
-    <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div className="min-h-screen py-12 sm:py-16 lg:py-20 pro-container mx-auto">
       {/* ----------------------------------------------------------- */}
       {/* 1. Header & Intro */}
       {/* ----------------------------------------------------------- */}
@@ -302,179 +322,103 @@ export default function JoinedEventsPage() {
           </Link>
         </div>
       ) : (
-        /* Events Table (Desktop) & Cards (Mobile) */
-        <div className="bg-white/90 dark:bg-[#0c1630]/90 backdrop-blur-xl rounded-3xl border border-slate-200/80 dark:border-white/10 overflow-hidden shadow-xl">
-          {/* Desktop Table */}
-          <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-left text-xs sm:text-sm">
-              <thead className="bg-slate-50/90 dark:bg-white/5 border-b border-slate-200/80 dark:border-white/10 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                <tr>
-                  <th scope="col" className="py-4 px-6">Event Details</th>
-                  <th scope="col" className="py-4 px-4">Category</th>
-                  <th scope="col" className="py-4 px-4">Scheduled Date</th>
-                  <th scope="col" className="py-4 px-4">Venue Location</th>
-                  <th scope="col" className="py-4 px-4">Status</th>
-                  <th scope="col" className="py-4 px-6 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-white/5">
-                {joinedEvents.map((rec) => (
-                  <tr
-                    key={rec._id}
-                    className="hover:bg-slate-50/70 dark:hover:bg-white/5 transition-colors"
+        /* Events Card Grid */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {joinedEvents.map((rec) => (
+            <article
+              key={rec._id}
+              className="group relative flex flex-col justify-between bg-white/90 dark:bg-[#0c1630]/90 backdrop-blur-xl rounded-3xl border border-slate-200/80 dark:border-white/10 overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300"
+            >
+              {/* Card Banner Image */}
+              <div className="relative w-full h-48 overflow-hidden bg-slate-900">
+                <Image
+                  src={
+                    rec.thumbnail ||
+                    'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&q=80&w=800'
+                  }
+                  alt={rec.eventTitle}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  unoptimized
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/30 to-transparent" />
+
+                {/* Floating Category Pill */}
+                <div className="absolute top-3.5 left-3.5">
+                  <span
+                    className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border backdrop-blur-md shadow-sm ${getCategoryBadgeClass(
+                      rec.eventType
+                    )}`}
                   >
-                    {/* Event Details */}
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-3.5">
-                        <div className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-800">
-                          <Image
-                            src={rec.thumbnail || 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&q=80&w=300'}
-                            alt={rec.eventTitle}
-                            fill
-                            sizes="56px"
-                            className="object-cover"
-                            unoptimized
-                          />
-                        </div>
-                        <div className="min-w-0 max-w-xs">
-                          <Link
-                            href={`/events/${rec.eventId}`}
-                            className="font-bold text-[#0B2447] dark:text-[#E8F0FF] hover:text-sky-600 dark:hover:text-sky-400 transition-colors line-clamp-1 block text-sm"
-                          >
-                            {rec.eventTitle}
-                          </Link>
-                          <span className="text-[11px] text-slate-400 block mt-0.5">
-                            ID: #{rec.eventId.slice(-6)}
-                          </span>
-                        </div>
-                      </div>
-                    </td>
+                    {rec.eventType}
+                  </span>
+                </div>
 
-                    {/* Category */}
-                    <td className="py-4 px-4">
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
-                        {rec.eventType}
-                      </span>
-                    </td>
+                {/* Floating Status Pill */}
+                <div className="absolute top-3.5 right-3.5">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/90 text-white backdrop-blur-md shadow-sm border border-emerald-400/30">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Confirmed</span>
+                  </span>
+                </div>
 
-                    {/* Scheduled Date */}
-                    <td className="py-4 px-4 whitespace-nowrap">
-                      <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300 font-medium">
-                        <Calendar className="w-3.5 h-3.5 text-sky-500 shrink-0" />
-                        <span>{formatDate(rec.eventDate)}</span>
-                      </div>
-                    </td>
+                {/* Event ID Badge */}
+                <div className="absolute bottom-3 left-3.5">
+                  <span className="px-2.5 py-1 rounded-lg bg-black/60 text-white/90 backdrop-blur-md text-[11px] font-mono border border-white/15">
+                    ID: #{rec.eventId.slice(-6)}
+                  </span>
+                </div>
+              </div>
 
-                    {/* Venue Location */}
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 max-w-[170px]">
-                        <MapPin className="w-3.5 h-3.5 text-rose-500 shrink-0" />
-                        <span className="truncate">{rec.eventLocation}</span>
-                      </div>
-                    </td>
+              {/* Card Body */}
+              <div className="p-5 flex-1 flex flex-col justify-between">
+                <div>
+                  <Link
+                    href={`/events/${rec.eventId}`}
+                    className="font-bold text-base sm:text-lg text-[#0B2447] dark:text-[#E8F0FF] group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors line-clamp-1 block mb-3"
+                    title={rec.eventTitle}
+                  >
+                    {rec.eventTitle}
+                  </Link>
 
-                    {/* Status Badge */}
-                    <td className="py-4 px-4 whitespace-nowrap">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
-                        <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                        <span>Confirmed</span>
-                      </span>
-                    </td>
-
-                    {/* Actions */}
-                    <td className="py-4 px-6 text-right whitespace-nowrap">
-                      <div className="flex items-center justify-end gap-2">
-                        <Link
-                          href={`/events/${rec.eventId}`}
-                          className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 transition-colors cursor-pointer"
-                          title="View event details"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </Link>
-
-                        <button
-                          type="button"
-                          onClick={() => handleCancelParticipation(rec._id, rec.eventTitle)}
-                          className="inline-flex items-center gap-1 py-1.5 px-3 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-600 hover:text-white dark:bg-rose-500/20 dark:hover:bg-rose-500 dark:text-rose-400 dark:hover:text-white text-xs font-semibold transition-all cursor-pointer"
-                          title="Cancel your participation"
-                        >
-                          <UserX className="w-3.5 h-3.5" />
-                          <span>Cancel Spot</span>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Mobile Cards */}
-          <div className="md:hidden divide-y divide-slate-100 dark:divide-white/5">
-            {joinedEvents.map((rec) => (
-              <div key={rec._id} className="p-4 space-y-3">
-                <div className="flex items-start gap-3">
-                  <div className="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-slate-800">
-                    <Image
-                      src={rec.thumbnail || 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&q=80&w=300'}
-                      alt={rec.eventTitle}
-                      fill
-                      sizes="64px"
-                      className="object-cover"
-                      unoptimized
-                    />
-                  </div>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
-                        {rec.eventType}
-                      </span>
-                      <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
-                        <CheckCircle2 className="w-3 h-3" />
-                        Confirmed
-                      </span>
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-sky-600 dark:text-sky-400">
+                      <Calendar className="w-4 h-4 text-sky-500 shrink-0" />
+                      <span>{formatDate(rec.eventDate)}</span>
                     </div>
 
-                    <h3 className="font-bold text-sm text-[#0B2447] dark:text-[#E8F0FF] line-clamp-1">
-                      {rec.eventTitle}
-                    </h3>
-
-                    <div className="flex flex-col gap-0.5 mt-1 text-xs text-slate-500 dark:text-slate-400">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3 text-sky-500" />
-                        {formatDate(rec.eventDate)}
-                      </span>
-                      <span className="flex items-center gap-1 truncate">
-                        <MapPin className="w-3 h-3 text-rose-500 shrink-0" />
-                        {rec.eventLocation}
-                      </span>
+                    <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                      <MapPin className="w-4 h-4 text-rose-500 shrink-0" />
+                      <span className="truncate">{rec.eventLocation}</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Mobile Actions */}
-                <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-white/5 text-xs">
+                {/* Card Actions Footer */}
+                <div className="pt-4 border-t border-slate-100 dark:border-white/10 flex items-center justify-between gap-2">
                   <Link
                     href={`/events/${rec.eventId}`}
-                    className="inline-flex items-center gap-1 text-sky-600 dark:text-sky-400 font-semibold"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-700 dark:text-[#E8F0FF] text-xs font-semibold transition-colors cursor-pointer"
+                    title="View live event details"
                   >
-                    <span>View Page</span>
-                    <ExternalLink className="w-3 h-3" />
+                    <ExternalLink className="w-3.5 h-3.5 text-sky-500" />
+                    <span>View Event</span>
                   </Link>
 
                   <button
                     type="button"
                     onClick={() => handleCancelParticipation(rec._id, rec.eventTitle)}
-                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 font-semibold"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-600 hover:text-white dark:bg-rose-500/20 dark:hover:bg-rose-500 dark:text-rose-400 dark:hover:text-white text-xs font-semibold transition-all cursor-pointer shadow-sm"
+                    title="Cancel your participation"
                   >
-                    <UserX className="w-3 h-3" />
-                    <span>Cancel Participation</span>
+                    <UserX className="w-3.5 h-3.5" />
+                    <span>Cancel Spot</span>
                   </button>
                 </div>
               </div>
-            ))}
-          </div>
+            </article>
+          ))}
         </div>
       )}
     </div>

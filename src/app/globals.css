@@ -3,6 +3,17 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+html {
+  scroll-behavior: smooth;
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
 /* ==============================================================
    1. LIGHT PALETTE: Electric Frost & Cyan
    Primary:      #3B6CFF (Electric Blue)
@@ -40,7 +51,7 @@
 }
 
 /* ==============================================================
-   2. DARK PALETTE: Neon Indigo (প্যালেট ৪ - সবচেয়ে বোল্ড)
+   2. DARK PALETTE: Neon Indigo (Palette 4 - High Contrast & Modern)
    Background:       #0B0B1E (Ink Black - No Pure #000)
    Surface:          #15152E (Indigo Night)
    Surface Elevated: #201F42 (Violet Dusk)
@@ -110,10 +121,10 @@ html:not(.dark) body,
 }
 
 /* Light mode high-contrast text guarantee for headings */
-html:not(.dark) h1,
-html:not(.dark) h2,
-html:not(.dark) h3,
-html:not(.dark) h4 {
+html:not(.dark) h1:not(.text-white):not([class*="text-white"]):not([class*="text-transparent"]),
+html:not(.dark) h2:not(.text-white):not([class*="text-white"]):not([class*="text-transparent"]),
+html:not(.dark) h3:not(.text-white):not([class*="text-white"]):not([class*="text-transparent"]),
+html:not(.dark) h4:not(.text-white):not([class*="text-white"]):not([class*="text-transparent"]) {
   color: #0B2447;
 }
 
@@ -149,4 +160,53 @@ html:not(.dark) .min-h-screen.bg-base-100 {
 svg {
   display: inline-block;
   vertical-align: middle;
+}
+
+/* ==============================================================
+   4. GLOBAL PROFESSIONAL SECTION & PAGE CONTAINER SYSTEM
+   Ensures ~190px side breathing room on desktop as requested,
+   with responsive scaling on mobile/tablet and clean vertical rhythm.
+   ============================================================== */
+.pro-container {
+  width: 100%;
+  max-width: 1920px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.25rem;   /* 20px on mobile */
+  padding-right: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .pro-container {
+    padding-left: 2rem;     /* 32px on sm */
+    padding-right: 2rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .pro-container {
+    padding-left: 3rem;     /* 48px on md */
+    padding-right: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .pro-container {
+    padding-left: 4.5rem;   /* 72px on lg */
+    padding-right: 4.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .pro-container {
+    padding-left: 120px;    /* 120px on xl */
+    padding-right: 120px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .pro-container {
+    padding-left: 190px;    /* Exactly 190px side margin on desktop */
+    padding-right: 190px;
+  }
 }

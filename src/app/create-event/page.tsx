@@ -40,32 +40,32 @@ const IMAGE_PRESETS = [
   {
     label: 'Cleanup',
     category: 'Cleanup',
-    url: 'https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?auto=format&fit=crop&q=80&w=1200',
+    url: 'https://images.unsplash.com/photo-1595278069441-2cf29f8005a4?auto=format&fit=crop&q=80&w=1200',
   },
   {
     label: 'Tree Plantation',
     category: 'Plantation',
-    url: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=1200',
+    url: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&q=80&w=1200',
   },
   {
     label: 'Winter Clothes',
     category: 'Donation',
-    url: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&q=80&w=1200',
+    url: 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&q=80&w=1200',
   },
   {
     label: 'Food Relief',
     category: 'Food Relief',
-    url: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=1200',
+    url: 'https://images.unsplash.com/photo-1593113646773-028c64a8f1b8?auto=format&fit=crop&q=80&w=1200',
   },
   {
     label: 'Health Camp',
     category: 'Healthcare',
-    url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=1200',
+    url: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&q=80&w=1200',
   },
   {
     label: 'Books & Literacy',
     category: 'Education',
-    url: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=1200',
+    url: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=1200',
   },
 ];
 
@@ -259,7 +259,8 @@ export default function CreateEventPage() {
   }
 
   return (
-    <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+    <div className="min-h-screen py-12 sm:py-16 lg:py-20 pro-container mx-auto">
+      <div className="max-w-4xl mx-auto">
       {/* ----------------------------------------------------------- */}
       {/* 1. Header Banner */}
       {/* ----------------------------------------------------------- */}
@@ -512,6 +513,7 @@ export default function CreateEventPage() {
             </button>
           </div>
         </form>
+      </div>
       </div>
     </div>
   );

@@ -22,6 +22,7 @@ import {
   CalendarDays,
   CalendarCheck,
   LogOut,
+  ChevronDown,
 } from 'lucide-react';
 import { useSession, signOut } from '@/lib/auth-client';
 import { clearToken, getServerUrl } from '@/lib/api';
@@ -71,6 +72,7 @@ export default function Navbar() {
   const [hovered, setHovered] = useState<number | null>(null);
   const [pill, setPill] = useState({ left: 0, width: 0, on: false });
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
+  const profileRef = useRef<HTMLDivElement | null>(null);
 
   const activeIndex = LINKS.findIndex((l) =>
     l.href === '/'
@@ -126,6 +128,19 @@ export default function Navbar() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  /* close profile dropdown when clicking outside */
+  useEffect(() => {
+    const onClickOutside = (e: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
+      }
+    };
+    if (profileOpen) {
+      document.addEventListener('mousedown', onClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', onClickOutside);
+  }, [profileOpen]);
+
   // Handle Logout
   const handleLogout = async () => {
     try {
@@ -152,7 +167,7 @@ export default function Navbar() {
         @media (prefers-reduced-motion: reduce){.mt-logo:hover .mt-logo-img{animation:none}}
       `}</style>
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto pro-container">
         <nav
           aria-label="Main"
           className={`flex items-center justify-between transition-all duration-300 ${
@@ -224,44 +239,65 @@ export default function Navbar() {
             {isPending ? (
               <div className="h-10 w-10 animate-pulse rounded-full bg-slate-200 dark:bg-white/15" />
             ) : user ? (
-              <div className="relative">
+              <div className="relative" ref={profileRef}>
                 <button
                   type="button"
                   onClick={() => setProfileOpen((p) => !p)}
                   title={user.name || 'User Profile'}
                   aria-label="User menu"
-                  className={`relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border-2 border-sky-500/70 dark:border-[#00C6FF]/60 p-0.5 shadow-sm transition hover:scale-105 hover:border-sky-500 dark:hover:border-[#00C6FF] ${focus}`}
+                  aria-expanded={profileOpen}
+                  className={`group flex items-center gap-1.5 rounded-full border border-slate-200/90 dark:border-white/10 bg-slate-50/80 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 p-1 pr-2.5 shadow-xs transition-all hover:border-sky-400 dark:hover:border-sky-400/40 cursor-pointer ${focus}`}
                 >
-                  {user.image ? (
-                    <Image
-                      src={user.image}
-                      alt={user.name || 'Avatar'}
-                      width={36}
-                      height={36}
-                      className="h-full w-full rounded-full object-cover"
-                    />
-                  ) : (
-                    <span className="flex h-full w-full items-center justify-center rounded-full bg-linear-to-br from-sky-500 to-indigo-600 dark:from-[#00C6FF] dark:to-[#7B61FF] text-xs font-bold text-white">
-                      {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                    </span>
-                  )}
+                  <div className="relative flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-sky-500/70 dark:border-[#00C6FF]/60 p-0.5 shadow-xs transition group-hover:scale-105">
+                    {user.image ? (
+                      <Image
+                        src={user.image}
+                        alt={user.name || 'Avatar'}
+                        width={36}
+                        height={36}
+                        className="h-full w-full rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="flex h-full w-full items-center justify-center rounded-full bg-linear-to-br from-sky-500 to-indigo-600 dark:from-[#00C6FF] dark:to-[#7B61FF] text-xs font-bold text-white">
+                        {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                      </span>
+                    )}
+                  </div>
+                  <ChevronDown
+                    className={`h-4 w-4 text-slate-500 dark:text-slate-400 transition-transform duration-200 ${
+                      profileOpen ? 'rotate-180 text-sky-500 dark:text-[#22D3EE]' : 'group-hover:text-slate-800 dark:group-hover:text-white'
+                    }`}
+                  />
                 </button>
 
                 {/* Profile Dropdown */}
                 {profileOpen && (
-                  <div className="absolute right-0 top-12 z-50 w-60 overflow-hidden rounded-2xl border border-slate-200/90 dark:border-white/10 bg-white/95 dark:bg-[#0F1A3A]/95 p-2 shadow-2xl backdrop-blur-xl transition-all">
-                    <div className="border-b border-slate-100 dark:border-white/10 px-3 py-2.5">
-                      <p className="truncate text-sm font-bold text-slate-800 dark:text-white">{user.name}</p>
-                      <p className="truncate text-xs text-slate-500 dark:text-[#8EA0C4]">{user.email}</p>
-                    </div>
-                    <div className="mt-1 space-y-1">
-                      <Link
-                        href="/profile"
-                        onClick={() => setProfileOpen(false)}
-                        className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 dark:text-[#E8F0FF] hover:bg-sky-50 dark:hover:bg-[#22D3EE]/15 transition-colors"
-                      >
-                        <User className="h-4 w-4 text-sky-500 dark:text-[#00B8D9]" /> My Profile
-                      </Link>
+                  <div className="absolute right-0 top-12 sm:top-13 z-50 w-64 overflow-hidden rounded-2xl border border-slate-200/90 dark:border-white/10 bg-white/95 dark:bg-[#0F1A3A]/95 p-2 shadow-2xl backdrop-blur-xl transition-all">
+                    {/* User info header that navigates to My Profile */}
+                    <Link
+                      href="/profile"
+                      onClick={() => setProfileOpen(false)}
+                      className="group block rounded-xl border border-transparent hover:border-sky-500/20 hover:bg-sky-50/70 dark:hover:bg-white/5 p-2.5 transition-all"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="truncate text-sm font-bold text-slate-800 dark:text-white group-hover:text-sky-600 dark:group-hover:text-[#22D3EE] transition-colors">
+                          {user.name}
+                        </p>
+                        <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-sky-500/10 px-2 py-0.5 text-[10px] font-bold text-sky-600 dark:bg-sky-400/20 dark:text-[#22D3EE] border border-sky-500/25">
+                          <User className="h-2.5 w-2.5" />
+                          My Profile
+                        </span>
+                      </div>
+                      <p className="truncate text-xs text-slate-500 dark:text-[#8EA0C4] mt-0.5">
+                        {user.email}
+                      </p>
+                    </Link>
+
+                    {/* Divider */}
+                    <div className="my-1.5 border-t border-slate-100 dark:border-white/10" />
+
+                    {/* Sub Menus: Create Event, Manage Events, Joined Events, Logout */}
+                    <div className="space-y-1">
                       <Link
                         href="/create-event"
                         onClick={() => setProfileOpen(false)}
@@ -283,13 +319,15 @@ export default function Navbar() {
                       >
                         <CalendarCheck className="h-4 w-4 text-sky-500 dark:text-[#00B8D9]" /> Joined Events
                       </Link>
-                      <button
-                        type="button"
-                        onClick={handleLogout}
-                        className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
-                      >
-                        <LogOut className="h-4 w-4" /> Logout
-                      </button>
+                      <div className="pt-1 border-t border-slate-100 dark:border-white/5">
+                        <button
+                          type="button"
+                          onClick={handleLogout}
+                          className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors cursor-pointer"
+                        >
+                          <LogOut className="h-4 w-4" /> Logout
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -329,8 +367,8 @@ export default function Navbar() {
       {/* mobile panel */}
       <div
         id="mobile-menu"
-        className={`w-full overflow-hidden border-t border-slate-200/80 dark:border-white/10 bg-white/98 dark:bg-[#070e20]/98 backdrop-blur-xl transition-all duration-300 md:hidden ${
-          open ? 'max-h-96 opacity-100 py-3' : 'pointer-events-none max-h-0 border-transparent opacity-0 py-0'
+        className={`w-full border-t border-slate-200/80 dark:border-white/10 bg-white/98 dark:bg-[#070e20]/98 backdrop-blur-xl transition-all duration-300 md:hidden ${
+          open ? 'max-h-60 opacity-100 py-3' : 'pointer-events-none max-h-0 overflow-hidden border-transparent opacity-0 py-0'
         }`}
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -342,6 +380,7 @@ export default function Navbar() {
                   <Link
                     href={l.href}
                     tabIndex={open ? 0 : -1}
+                    onClick={() => setOpen(false)}
                     aria-current={active ? 'page' : undefined}
                     className={`block rounded-xl px-4 py-2.5 text-base font-semibold transition-colors ${focus} ${
                       active
@@ -355,51 +394,12 @@ export default function Navbar() {
               );
             })}
 
-            {user ? (
-              <>
-                <li className="pt-2">
-                  <Link
-                    href="/create-event"
-                    tabIndex={open ? 0 : -1}
-                    className="block rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 dark:text-[#B8C7E8] hover:bg-slate-100 dark:hover:bg-white/5 dark:hover:text-white"
-                  >
-                    Create Event
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/manage-events"
-                    tabIndex={open ? 0 : -1}
-                    className="block rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 dark:text-[#B8C7E8] hover:bg-slate-100 dark:hover:bg-white/5 dark:hover:text-white"
-                  >
-                    Manage Events
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/joined-events"
-                    tabIndex={open ? 0 : -1}
-                    className="block rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 dark:text-[#B8C7E8] hover:bg-slate-100 dark:hover:bg-white/5 dark:hover:text-white"
-                  >
-                    Joined Events
-                  </Link>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    tabIndex={open ? 0 : -1}
-                    className="block w-full text-left rounded-xl px-4 py-2 text-sm font-semibold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10"
-                  >
-                    Logout ({user.name})
-                  </button>
-                </li>
-              </>
-            ) : (
+            {!user && (
               <li className="pt-2 sm:hidden">
                 <Link
                   href="/login"
                   tabIndex={open ? 0 : -1}
+                  onClick={() => setOpen(false)}
                   className={`flex items-center justify-center gap-2 rounded-xl bg-linear-to-r from-sky-500 to-indigo-600 dark:from-[#3B6CFF] dark:to-[#7B61FF] py-2.5 font-bold text-white shadow-md ${focus}`}
                 >
                   <LogIn className="h-4 w-4" /> Login

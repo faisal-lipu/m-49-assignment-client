@@ -112,7 +112,8 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto">
+    <div className="min-h-screen py-12 sm:py-16 lg:py-20 pro-container mx-auto">
+      <div className="max-w-3xl mx-auto">
       {/* Header */}
       <div className="text-center max-w-xl mx-auto mb-8">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold border border-sky-500/25 bg-sky-500/10 text-sky-700 dark:text-sky-300 shadow-sm mb-3">
@@ -258,6 +259,7 @@ export default function ProfilePage() {
             </button>
           </div>
         </form>
+      </div>
       </div>
     </div>
   );

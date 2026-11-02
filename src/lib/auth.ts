@@ -34,13 +34,18 @@ export const auth = betterAuth({
     },
   },
 
-  // 3. Optional: Add extra user fields like image/photoURL
+  // 3. Optional: Add extra user fields like image/photoURL and role
   user: {
     additionalFields: {
       image: {
         type: "string",
         required: false,
         defaultValue: "",
+      },
+      role: {
+        type: "string",
+        required: false,
+        defaultValue: "volunteer",
       },
     },
   },

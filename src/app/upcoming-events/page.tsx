@@ -30,6 +30,7 @@ import {
   Stethoscope,
   GraduationCap,
   Layers,
+  Plus,
 } from 'lucide-react';
 import { getServerUrl } from '@/lib/api';
 
@@ -57,7 +58,7 @@ const FALLBACK_EVENTS: EventItem[] = [
       'Join Maitri volunteers to distribute thermal blankets, jackets, and winter essentials to underprivileged families, homeless elders, and children facing harsh temperatures across Mirpur.',
     eventType: 'Donation',
     thumbnail:
-      'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&q=80&w=1200',
+      'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&q=80&w=1200',
     location: 'Mirpur Section 10 Community Center, Dhaka',
     eventDate: '2026-11-15',
     creatorEmail: 'organizer@maitri.org',
@@ -72,7 +73,7 @@ const FALLBACK_EVENTS: EventItem[] = [
       'A community-driven lakefront cleanup. We will collect single-use plastics, clear clogged walkways, install segregated waste bins, and raise civic awareness for an eco-friendly neighborhood.',
     eventType: 'Cleanup',
     thumbnail:
-      'https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?auto=format&fit=crop&q=80&w=1200',
+      'https://images.unsplash.com/photo-1595278069441-2cf29f8005a4?auto=format&fit=crop&q=80&w=1200',
     location: 'Dhanmondi Lake Amphitheater, Road 8/A, Dhaka',
     eventDate: '2026-11-22',
     creatorEmail: 'organizer@maitri.org',
@@ -87,7 +88,7 @@ const FALLBACK_EVENTS: EventItem[] = [
       'Help restore Dhaka urban greenery by planting over 500 indigenous fruit, medicinal, and shade trees. Free saplings, gardening gloves, and water cans will be supplied to all participants.',
     eventType: 'Plantation',
     thumbnail:
-      'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=1200',
+      'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&q=80&w=1200',
     location: 'Ramna Park South Gate, Shahbagh, Dhaka',
     eventDate: '2026-12-05',
     creatorEmail: 'organizer@maitri.org',
@@ -102,7 +103,7 @@ const FALLBACK_EVENTS: EventItem[] = [
       'Distributing balanced, fresh cooked meals and nutrition packs to rickshaw pullers, street vendors, and low-income families around Lalbagh and surrounding riverbank areas.',
     eventType: 'Food Relief',
     thumbnail:
-      'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=1200',
+      'https://images.unsplash.com/photo-1593113646773-028c64a8f1b8?auto=format&fit=crop&q=80&w=1200',
     location: 'Lalbagh Fort Grounds, Old Dhaka',
     eventDate: '2026-12-18',
     creatorEmail: 'organizer@maitri.org',
@@ -117,7 +118,7 @@ const FALLBACK_EVENTS: EventItem[] = [
       'Volunteer doctors and nurses offering free general health checkups, blood sugar screenings, pediatric care consultations, and essential over-the-counter medicine distribution.',
     eventType: 'Healthcare',
     thumbnail:
-      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&q=80&w=1200',
+      'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&q=80&w=1200',
     location: 'Kurmitola High School Campus, Dhaka',
     eventDate: '2027-01-10',
     creatorEmail: 'organizer@maitri.org',
@@ -132,7 +133,7 @@ const FALLBACK_EVENTS: EventItem[] = [
       'Collecting storybooks, primary learning materials, stationery boxes, and school bags for children in informal settlements. Volunteers will also conduct an open reading circle.',
     eventType: 'Education',
     thumbnail:
-      'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=1200',
+      'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=1200',
     location: 'Kawran Bazar Railgate Community Club, Dhaka',
     eventDate: '2027-01-24',
     creatorEmail: 'organizer@maitri.org',
@@ -276,7 +277,7 @@ export default function UpcomingEventsPage() {
   };
 
   return (
-    <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div className="min-h-screen py-12 sm:py-16 lg:py-20 pro-container mx-auto">
       {/* ------------------------------------------------------------- */}
       {/* 1. Header Banner & Intro */}
       {/* ------------------------------------------------------------- */}
@@ -327,7 +328,7 @@ export default function UpcomingEventsPage() {
           </div>
 
           {/* Sort Dropdown & Layout Toggles */}
-          <div className="flex items-center gap-2.5 justify-between sm:justify-start">
+          <div className="flex flex-wrap items-center gap-2.5 justify-between sm:justify-start">
             <div className="flex items-center gap-2">
               <label htmlFor="sortBy" className="text-xs font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap hidden sm:inline">
                 Sort by:
@@ -348,7 +349,7 @@ export default function UpcomingEventsPage() {
             <div className="flex items-center bg-slate-100 dark:bg-[#081024] p-1 rounded-xl border border-slate-200 dark:border-slate-700/80">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-1.5 rounded-lg text-xs transition-colors ${
+                className={`p-1.5 rounded-lg text-xs transition-colors cursor-pointer ${
                   viewMode === 'grid'
                     ? 'bg-white dark:bg-sky-500 text-sky-600 dark:text-white shadow-xs font-bold'
                     : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'
@@ -359,7 +360,7 @@ export default function UpcomingEventsPage() {
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-1.5 rounded-lg text-xs transition-colors ${
+                className={`p-1.5 rounded-lg text-xs transition-colors cursor-pointer ${
                   viewMode === 'list'
                     ? 'bg-white dark:bg-sky-500 text-sky-600 dark:text-white shadow-xs font-bold'
                     : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'
@@ -369,6 +370,16 @@ export default function UpcomingEventsPage() {
                 <List className="w-4 h-4" />
               </button>
             </div>
+
+            {/* + Create Event Button */}
+            <Link
+              href="/create-event"
+              className="inline-flex items-center gap-1.5 py-2 px-3.5 sm:py-2.5 sm:px-4 rounded-xl bg-sky-500 hover:bg-sky-600 active:scale-[0.98] text-white font-bold text-xs sm:text-sm shadow-md shadow-sky-500/25 transition-all cursor-pointer whitespace-nowrap"
+              title="Organize and publish a new social drive"
+            >
+              <Plus className="w-4 h-4 shrink-0" />
+              <span>Create Event</span>
+            </Link>
           </div>
         </div>
 
@@ -496,7 +507,7 @@ export default function UpcomingEventsPage() {
                 {/* Event Thumbnail */}
                 <div className="relative w-full h-48 overflow-hidden bg-slate-100 dark:bg-slate-800">
                   <Image
-                    src={ev.thumbnail || 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&q=80&w=1200'}
+                    src={ev.thumbnail || 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&q=80&w=1200'}
                     alt={ev.title}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -544,7 +555,7 @@ export default function UpcomingEventsPage() {
                   </div>
 
                   {/* Description snippet */}
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed mb-4 flex-1">
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed mb-4 flex-1 text-justify break-words [overflow-wrap:anywhere]">
                     {ev.description}
                   </p>
 
@@ -589,7 +600,7 @@ export default function UpcomingEventsPage() {
                 {/* Thumbnail */}
                 <div className="relative w-full sm:w-48 h-36 shrink-0 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800">
                   <Image
-                    src={ev.thumbnail || 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fit=crop&q=80&w=1200'}
+                    src={ev.thumbnail || 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&q=80&w=1200'}
                     alt={ev.title}
                     fill
                     sizes="(max-width: 640px) 100vw, 192px"
@@ -628,7 +639,7 @@ export default function UpcomingEventsPage() {
                       {ev.title}
                     </h2>
 
-                    <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed mb-2">
+                    <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed mb-2 text-justify break-words [overflow-wrap:anywhere]">
                       {ev.description}
                     </p>
                   </div>
